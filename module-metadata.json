@@ -1,12 +1,348 @@
 {
   "path": ".",
-  "variables": {},
-  "outputs": {},
+  "variables": {
+    "imported_cert_certificate": {
+      "name": "imported_cert_certificate",
+      "type": "string",
+      "description": "The TLS certificate to import.",
+      "pos": {
+        "filename": "variables.tf",
+        "line": 30
+      }
+    },
+    "imported_cert_intermediate": {
+      "name": "imported_cert_intermediate",
+      "type": "string",
+      "description": "(optional) The intermediate certificate for the TLS certificate to import.",
+      "pos": {
+        "filename": "variables.tf",
+        "line": 41
+      }
+    },
+    "imported_cert_private_key": {
+      "name": "imported_cert_private_key",
+      "type": "string",
+      "description": "(optional) The private key for the TLS certificate to import.",
+      "sensitive": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 35
+      }
+    },
+    "region": {
+      "name": "region",
+      "type": "string",
+      "description": "The region where the Secrets Manager instance is deployed.",
+      "required": true,
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.region",
+        "ibm_sm_imported_certificate.imported_cert.region",
+        "ibm_sm_username_password_secret.username_password_secret.region"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 5
+      },
+      "cloud_data_type": "region",
+      "immutable": true,
+      "computed": true
+    },
+    "secret_description": {
+      "name": "secret_description",
+      "type": "string",
+      "description": "Description of the secret to create.",
+      "required": true,
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.description",
+        "ibm_sm_imported_certificate.imported_cert.description",
+        "ibm_sm_username_password_secret.username_password_secret.description"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 50
+      }
+    },
+    "secret_group_id": {
+      "name": "secret_group_id",
+      "type": "string",
+      "description": "The ID of the secret group for the secret. If `null`, the `default` secret group is used.",
+      "default": "default",
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.secret_group_id",
+        "ibm_sm_imported_certificate.imported_cert.secret_group_id",
+        "ibm_sm_username_password_secret.username_password_secret.secret_group_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 13
+      },
+      "immutable": true,
+      "computed": true
+    },
+    "secret_labels": {
+      "name": "secret_labels",
+      "type": "list(string)",
+      "description": "Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (\u003c\u003e), comma (,), colon (:), ampersand (\u0026), and vertical pipe character (|).",
+      "default": [],
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.labels",
+        "ibm_sm_imported_certificate.imported_cert.labels",
+        "ibm_sm_username_password_secret.username_password_secret.labels"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 59
+      },
+      "computed": true,
+      "elem": {
+        "type": "TypeString"
+      }
+    },
+    "secret_name": {
+      "name": "secret_name",
+      "type": "string",
+      "description": "Name of the secret to create.",
+      "required": true,
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.name",
+        "ibm_sm_imported_certificate.imported_cert.name",
+        "ibm_sm_username_password_secret.username_password_secret.name"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 46
+      }
+    },
+    "secret_payload_password": {
+      "name": "secret_payload_password",
+      "type": "string",
+      "description": "The payload (for arbitrary secrets) or password (for username and password credentials) of the secret.",
+      "default": "",
+      "required": true,
+      "sensitive": true,
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.payload",
+        "ibm_sm_username_password_secret.username_password_secret.password"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 69
+      },
+      "immutable": true
+    },
+    "secret_type": {
+      "name": "secret_type",
+      "type": "string",
+      "description": "Type of secret to create, must be one of: arbitrary, username_password, imported_cert",
+      "required": true,
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.count",
+        "ibm_sm_imported_certificate.imported_cert.count",
+        "ibm_sm_username_password_secret.username_password_secret.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 18
+      }
+    },
+    "secret_user_pass_auto_rotation": {
+      "name": "secret_user_pass_auto_rotation",
+      "type": "bool",
+      "description": "Whether to configure automatic rotation. Applies only to the `username_password` secret type.",
+      "default": true,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 75
+      }
+    },
+    "secret_user_pass_auto_rotation_interval": {
+      "name": "secret_user_pass_auto_rotation_interval",
+      "type": "number",
+      "description": "Specifies the rotation interval for the rotation unit.",
+      "default": 90,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 85
+      }
+    },
+    "secret_user_pass_auto_rotation_unit": {
+      "name": "secret_user_pass_auto_rotation_unit",
+      "type": "string",
+      "description": "Specifies the unit of time for rotation of a username_password secret. Acceptable values are `day` or `month`.",
+      "default": "day",
+      "pos": {
+        "filename": "variables.tf",
+        "line": 80
+      }
+    },
+    "secret_username": {
+      "name": "secret_username",
+      "type": "string",
+      "description": "Username of the secret to create. Applies only to `username_password` secret types. When `null`, an `arbitrary` secret is created.",
+      "required": true,
+      "source": [
+        "ibm_sm_username_password_secret.username_password_secret.username"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 54
+      },
+      "immutable": true
+    },
+    "secrets_manager_guid": {
+      "name": "secrets_manager_guid",
+      "type": "string",
+      "description": "The instance ID of the Secrets Manager instance where the secret will be added.",
+      "required": true,
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.instance_id",
+        "ibm_sm_imported_certificate.imported_cert.instance_id",
+        "ibm_sm_username_password_secret.username_password_secret.instance_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 9
+      },
+      "cloud_data_type": "resource_instance",
+      "immutable": true
+    },
+    "service_endpoints": {
+      "name": "service_endpoints",
+      "type": "string",
+      "description": "The service endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private`",
+      "default": "public",
+      "pos": {
+        "filename": "variables.tf",
+        "line": 91
+      }
+    }
+  },
+  "outputs": {
+    "secret_crn": {
+      "name": "secret_crn",
+      "description": "CRN of the created Secret",
+      "value": "local.secret_crn",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 10
+      }
+    },
+    "secret_id": {
+      "name": "secret_id",
+      "description": "ID of the created Secret",
+      "value": "local.secret_id",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 5
+      }
+    },
+    "user_pass_next_rotation_date": {
+      "name": "user_pass_next_rotation_date",
+      "description": "Next rotation data for username_password secret",
+      "value": "local.username_password_secret_next_rotation_date",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 23
+      }
+    },
+    "user_pass_rotation": {
+      "name": "user_pass_rotation",
+      "description": "Status of auto-rotation for username_password secret",
+      "value": "local.secret_user_pass_auto_rotation",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 15
+      }
+    },
+    "user_pass_rotation_interval": {
+      "name": "user_pass_rotation_interval",
+      "description": "Rotation frecuency for username_password secret",
+      "value": "local.username_password_secret_auto_rotation_frecuency",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 19
+      }
+    }
+  },
   "required_core": [
     "\u003e= 1.3.0"
   ],
-  "required_providers": {},
-  "managed_resources": {},
+  "required_providers": {
+    "ibm": {
+      "source": "IBM-Cloud/ibm",
+      "version_constraints": [
+        "\u003e= 1.51.0"
+      ]
+    }
+  },
+  "managed_resources": {
+    "ibm_sm_arbitrary_secret.arbitrary_secret": {
+      "mode": "managed",
+      "type": "ibm_sm_arbitrary_secret",
+      "name": "arbitrary_secret",
+      "attributes": {
+        "count": "secret_type",
+        "description": "secret_description",
+        "instance_id": "secrets_manager_guid",
+        "labels": "secret_labels",
+        "name": "secret_name",
+        "payload": "secret_payload_password",
+        "region": "region",
+        "secret_group_id": "secret_group_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 31
+      }
+    },
+    "ibm_sm_imported_certificate.imported_cert": {
+      "mode": "managed",
+      "type": "ibm_sm_imported_certificate",
+      "name": "imported_cert",
+      "attributes": {
+        "count": "secret_type",
+        "description": "secret_description",
+        "instance_id": "secrets_manager_guid",
+        "labels": "secret_labels",
+        "name": "secret_name",
+        "region": "region",
+        "secret_group_id": "secret_group_id"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 73
+      }
+    },
+    "ibm_sm_username_password_secret.username_password_secret": {
+      "mode": "managed",
+      "type": "ibm_sm_username_password_secret",
+      "name": "username_password_secret",
+      "attributes": {
+        "count": "secret_type",
+        "description": "secret_description",
+        "instance_id": "secrets_manager_guid",
+        "labels": "secret_labels",
+        "name": "secret_name",
+        "password": "secret_payload_password",
+        "region": "region",
+        "secret_group_id": "secret_group_id",
+        "username": "secret_username"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 42
+      }
+    }
+  },
   "data_resources": {},
   "module_calls": {}
 }
