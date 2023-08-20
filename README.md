@@ -144,25 +144,25 @@ statement instead the previous block.
 <!-- No permissions are needed to run this module.-->
 <!-- END MODULE HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Requirements
+### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
 
-## Modules
+### Modules
 
 No modules.
 
-## Resources
+### Resources
 
 No resources.
 
-## Inputs
+### Inputs
 
 No inputs.
 
-## Outputs
+### Outputs
 
 No outputs.
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
