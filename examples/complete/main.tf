@@ -140,13 +140,56 @@ data "ibm_sm_username_password_secret" "user_pass_no_rotate_secret" {
 # Example working with imported cert secret
 ##############################################################################
 
+resource "tls_private_key" "ca_key" {
+  algorithm = "RSA"
+}
+
+resource "tls_private_key" "key" {
+  algorithm = "RSA"
+}
+
+resource "tls_self_signed_cert" "ca_cert" {
+  is_ca_certificate = true
+  private_key_pem   = tls_private_key.ca_key.private_key_pem
+
+  subject {
+    common_name  = "goldeneye.com"
+    organization = "GoldenEye self signed cert"
+  }
+
+  validity_period_hours = 1 * 24 * 90
+
+  allowed_uses = ["key_encipherment", "digital_signature", "server_auth"]
+}
+
+resource "tls_cert_request" "request" {
+  private_key_pem = tls_private_key.key.private_key_pem
+
+  subject {
+    common_name  = "goldeneye.com"
+    organization = "GoldenEye self signed cert"
+  }
+}
+
+resource "tls_locally_signed_cert" "cert" {
+  cert_request_pem   = tls_cert_request.request.cert_request_pem
+  ca_private_key_pem = tls_private_key.ca_key.private_key_pem
+  ca_cert_pem        = tls_self_signed_cert.ca_cert.cert_pem
+
+  validity_period_hours = 1 * 24 * 90
+  allowed_uses          = ["key_encipherment", "digital_signature", "server_auth"]
+}
+
 # create imported cert secret
 module "secret_manager_imported_cert" {
-  source               = "../.."
-  region               = local.sm_region
-  secrets_manager_guid = local.sm_guid
-  secret_name          = "${var.prefix}-imported-cert"
-  secret_group_id      = module.secrets_manager_group.secret_group_id
-  secret_description   = "created by secrets-manager-secret-module complete example"
-  secret_type          = "imported_cert" #checkov:skip=CKV_SECRET_6
+  source                     = "../.."
+  region                     = local.sm_region
+  secrets_manager_guid       = local.sm_guid
+  secret_name                = "${var.prefix}-imported-cert"
+  secret_group_id            = module.secrets_manager_group.secret_group_id
+  secret_description         = "created by secrets-manager-secret-module complete example"
+  secret_type                = "imported_cert" #checkov:skip=CKV_SECRET_6
+  imported_cert_certificate  = resource.tls_locally_signed_cert.cert.cert_pem
+  imported_cert_private_key  = resource.tls_private_key.key.private_key_pem
+  imported_cert_intermediate = resource.tls_self_signed_cert.ca_cert.cert_pem
 }
