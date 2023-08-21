@@ -158,8 +158,7 @@ resource "tls_self_signed_cert" "ca_cert" {
   }
 
   validity_period_hours = 1 * 24 * 90
-
-  allowed_uses = ["key_encipherment", "digital_signature", "server_auth"]
+  allowed_uses          = ["key_encipherment", "digital_signature", "server_auth"]
 }
 
 resource "tls_cert_request" "request" {
