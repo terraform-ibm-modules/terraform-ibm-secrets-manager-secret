@@ -4,7 +4,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
-[![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-secrets-manager-private-cert-engine?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/releases/latest)
+[![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-secrets-manager-secret?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/releases/latest)
 
 This module creates a secret in an IBM Secrets Manager secrets group.
 
@@ -62,7 +62,8 @@ module "secrets_manager_arbitrary_secret" {
 
 module "secrets_manager_user_pass_secret" {
   # Replace "master" with a GIT release version to lock into a specific release
-  source                  = "git::https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret?ref=master"
+  source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                 = "3.1.1"
   region                  = "us-south"
   secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
@@ -80,7 +81,8 @@ module "secrets_manager_user_pass_secret" {
 
 module "secret_manager_imported_cert secret" {
   # Replace "master" with a GIT release version to lock into a specific release
-  source                     = "git::https://github.ibm.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret?ref=master"
+  source                     = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                    = "3.1.1"
   region                     = "us-south
   secrets_manager_guid       = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id            = "432b91f1-ff6d-4b47-9f06-82debc236d90"
