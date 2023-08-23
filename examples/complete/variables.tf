@@ -1,19 +1,25 @@
 variable "ibmcloud_api_key" {
   type        = string
-  description = "The IBM Cloud API Key"
+  description = "IBM Cloud APIkey that's associated with the account to provision resources in"
   sensitive   = true
-}
-
-variable "region" {
-  type        = string
-  description = "Region to provision all resources created by this example"
-  default     = "us-south"
 }
 
 variable "prefix" {
   type        = string
-  description = "Prefix to append to all resources created by this example"
-  default     = "complete"
+  description = "Prefix to use for naming of all resource created by this example"
+  default     = "test-sm-secret-module"
+}
+
+variable "sm_service_plan" {
+  type        = string
+  description = "Description of service plan to be used to provision Secrets Manager if not passing a value for var.existing_sm_instance_guid"
+  default     = "trial"
+}
+
+variable "region" {
+  type        = string
+  description = "Region to provision Secrets Manager in if not passing a value for var.existing_sm_instance_guid"
+  default     = "au-syd"
 }
 
 variable "resource_group" {
@@ -24,6 +30,18 @@ variable "resource_group" {
 
 variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to created resources"
+  description = "Optional list of tags to be added to any created resources"
   default     = []
+}
+
+variable "existing_sm_instance_guid" {
+  type        = string
+  description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned"
+  default     = null
+}
+
+variable "existing_sm_instance_region" {
+  type        = string
+  description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_guid"
+  default     = null
 }
