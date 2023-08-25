@@ -1,8 +1,4 @@
-##############################################################################
-# Provider config
-##############################################################################
-
 provider "ibm" {
   ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.region
+  region           = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
 }

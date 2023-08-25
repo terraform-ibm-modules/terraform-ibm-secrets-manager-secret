@@ -1,154 +1,124 @@
-<!-- BEGIN MODULE HOOK -->
+# Secrets Manager Secret module
 
-<!-- Update the title to match the module name and add a description -->
-# Terraform Modules Template Project
-<!-- UPDATE BADGE: Update the link for the following badge-->
-[![Incubating (Not yet consumable)](https://img.shields.io/badge/status-Incubating%20(Not%20yet%20consumable)-red)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
-[![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-module-template?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-module-template/releases/latest)
-[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![Stable (Adopted)](https://img.shields.io/badge/Status-Stable%20(Adopted)-yellowgreen?style=plastic)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
+[![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-secrets-manager-secret?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/releases/latest)
 
-<!-- BEGIN TOC HOOK -->
-Table of Contents
-====================
+This module creates a secret in an IBM Secrets Manager secrets group.
 
-* [Terraform modules](#Terraform-modules)
-    * [Terraform Modules Template Project](#Terraform-Modules-Template-Project)
-* [Examples](#Examples)
-* [Contributing](#Contributing)
-<!-- END TOC HOOK -->
+The module supports the following secret types:
 
-<!-- Remove the content in this H2 heading after completing the steps -->
+- [Arbitrary](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-arbitrary-secrets&interface=ui)
+- [User credentials](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-user-credentials&interface=ui)
+- [Imported Certificate](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-certificates&interface=api#import-certificates)
 
-## Submit a new module
+The following attributes and parameters are supported for both secret types:
 
-:+1::tada: Thank you for taking the time to contribute! :tada::+1:
+- `secret_group_id`: When `null`, the `default` secret-group is used.
+- `secret_name`: The name of the secret that is created.
+- `secret_description`: The description of the secret.
+- `secret_payload_password`: The payload (for arbitrary secrets) or password (for username and password credentials) of the secret.
 
-This template repository exists to help you create Terraform modules for IBM Cloud.
+The following attributes and parameters are supported only when storing user credentials:
 
-The default structure includes the following files:
+- `secret_username`: The username of the secret that is created. Applicable only to the `username_password` secret type. When the parameter is `null`, an `arbitrary` secret is created.
+- `secret_user_pass_auto_rotation`: Configures automatic rotation. Default is `true`.
+- `secret_user_pass_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
+- `secret_user_pass_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `90`.
 
-- `README.md`: A description of the module
-- `main.tf`: The logic for the module
-- `version.tf`: The required terraform and provider versions
-- `variables.tf`: The input variables for the module
-- `outputs.tf`: The values that are output from the module
+The following attributes and parameters are supported only when creating imported certificates:
 
-Use nested modules to split complex behavior into smaller modules that advanced users can choose from. Put nested modules under a `/modules` subdirectory. If you include more than one nested module, make the submodules [composable](https://developer.hashicorp.com/terraform/language/modules/develop/composition) by the caller. In other words, don't embed calls between submodules to create a deeply nested tree of modules.
-For more information, see [Module structure](https://terraform-ibm-modules.github.io/documentation/#/module-structure) in the project documentation.
-
-You can add other content to support what your module does and how it works. For example, you might add a `scripts/` directory that contains shell scripts that are run by a `local-exec` `null_resource` in the Terraform module.
-
-Follow this process to create and submit a Terraform module.
-
-### Create a repo from this repo template
-
-1.  Create a repository from this repository template by clicking `Use this template` in the upper right of the GitHub UI.
-&emsp;&emsp;&emsp;&emsp;<br>For more information about creating a repository from a template, see the [GitHub docs](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
-1.  Select `terraform-ibm-modules` as the owner.
-1.  Enter a name for the module in format `terraform-ibm-<name>`, where `<name>` reflects the type of infrastructure that the module manages.
-&emsp;&emsp;&emsp;&emsp;<br>Use hyphens as delimiters for names with multiple words (for example, terraform-ibm-`activity-tracker`).
-1.  Provide a short description of the module.
-&emsp;&emsp;&emsp;&emsp;<br>The description is displayed under the repository name on the [organization page](https://github.com/terraform-ibm-modules) and in the **About** section of the repository. Use the description to help users understand the purpose of your module. For more information, see [module names and descriptions](https://terraform-ibm-modules.github.io/documentation/#/implementation-guidelines?id=module-names-and-descriptions) in the docs.
-
-### Clone the repo and set up your development environment
-
-Locally clone the new repository and set up your development environment by completing the tasks in [Local development setup](https://terraform-ibm-modules.github.io/documentation/#/local-dev-setup) in the project documentation.
-
-### Update the repo name and description in source control
-
-To help make sure that the repo name and description are not changed except through pull requests, they are defined in the `settings.yml` file.
-
-Check to make sure that values are uncommented and correct:
-
-1.  Open the [settings.yml](.github/settings.yml) file.
-1.  If not already updated, uncomment the `name` and `description` properties and set the values to what you specified when you requested the repo.
-
-### Update the Terraform files
-
-Implement the logic for your module by updating the `main.tf`, `version.tf`, `variables.tf`, and `outputs.tf` Terraform files. For more information, see [Creating Terraform on IBM Cloud templates](https://cloud.ibm.com/docs/ibm-cloud-provider-for-terraform?topic=ibm-cloud-provider-for-terraform-create-tf-config).
-
-### Create examples and tests
-
-Add one or more examples in the `examples` directory that consume your new module, and configure tests for them in the `tests` directory. For more information about tests, see [Tests](https://terraform-ibm-modules.github.io/documentation/#/tests).
-
-### Update the content in the readme file
-
-After you implement the logic for your module and create examples and tests, update this readme file in your repository by following these steps:
-
-1.  Update the title heading and add a description about your module.
-1.  Update the badge links.
-1.  Remove all the content in this H2 heading section.
-1.  Complete the [Usage](#usage) and [Required IAM access policies](#required-iam-access-policies) sections. The [Examples](#examples) and [Requirements](#requirements) section are populated by a pre-commit hook.
-
-### Commit your code and submit your module for review
-
-1.  Before you commit any code, review [Contributing to the IBM Cloud Terraform modules project](https://terraform-ibm-modules.github.io/documentation/#/contribute-module) in the project documentation.
-1.  Create a pull request for review.
-
-### Post-merge steps
-
-After the first PR for your module is merged, follow these post-merge steps:
-
-<!-- Remove the content in this previous H2 heading -->
-## Reference architectures
-
-<!--
-Add links to any reference architectures for this module.
-(Usually in the `/reference-architectures` directory.)
-See "Reference architecture" in Authoring Guidelines in the public documentation at
-https://terraform-ibm-modules.github.io/documentation/#/implementation-guidelines?id=reference-architecture
--->
+- `imported_cert`: specify if imported certificate secret type will be created, defaults to `false`.
+- `imported_cert_certificate`: The TLS certificate to be imported. Defaults to `null`.
+- `imported_cert_private_key`: Optional private key for the TLS certificate to be imported. Defaults to `null`.
+- `imported_cert_intermediate`: Optional intermediate certificate for the TLS certificate to be imported. Defaults to `null`.
 
 ## Usage
 
-<!--
-Add an example of the use of the module in the following code block.
+```hcl
+##############################################################################
+# Create Arbitrary Secret
+##############################################################################
 
-Use real values instead of "var.<var_name>" or other placeholder values
-unless real values don't help users know what to change.
--->
+module "secrets_manager_arbitrary_secret" {
+  # Replace "master" with a GIT release version to lock into a specific release
+  source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                 = "3.1.1"
+  region                  = "us-south"
+  secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
+  secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
+  secret_name             = "example-arbitrary-secret"
+  secret_description      = "Extended description for the arbirtary secret."
+  secret_payload_password = "secret-data" #pragma: allowlist secret
+}
+```
 
 ```hcl
+##############################################################################
+# Create UserPass Secret
+##############################################################################
 
+module "secrets_manager_user_pass_secret" {
+  # Replace "master" with a GIT release version to lock into a specific release
+  source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                 = "3.1.1"
+  region                  = "us-south"
+  secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
+  secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
+  secret_name             = "example-user-pass-secret"
+  secret_description      = "Extended description for the user pass secret."
+  secret_payload_password = "secret-data" #pragma: allowlist secret
+  secret_username         = "terraform-user"
+}
+```
+
+```hcl
+##############################################################################
+# Create Imported Cert
+##############################################################################
+
+module "secret_manager_imported_cert secret" {
+  # Replace "master" with a GIT release version to lock into a specific release
+  source                     = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                    = "3.1.1"
+  region                     = "us-south
+  secrets_manager_guid       = "42454b3b-5b06-407b-a4b3-34d9ef323901"
+  secret_group_id            = "432b91f1-ff6d-4b47-9f06-82debc236d90"
+  secret_name                = "example-imported-cert-secret"
+  secret_description         = "Extended description for the imported cert secret."
+  imported_cert              = true
+  imported_cert_certificate  = module.certificate.cert_pem
+  imported_cert_private_key  = module.certificate.private_key #pragma: allowlist secret
+  imported_cert_intermediate = module.certificate.ca_cert_pem
+}
 ```
 
 ## Required IAM access policies
-
-<!-- PERMISSIONS REQUIRED TO RUN MODULE
-If this module requires permissions, uncomment the following block and update
-the sample permissions, following the format.
-Replace the sample Account and IBM Cloud service names and roles with the
-information in the console at
-Manage > Access (IAM) > Access groups > Access policies.
--->
-
-<!--
 You need the following permissions to run this module.
 
 - Account Management
-    - **Sample Account Service** service
+    - **Resource Group** service
+        - `Viewer` platform access
+- IAM Services
+    - **Secrets Manager** service
         - `Editor` platform access
         - `Manager` service access
-    - IAM Services
-        - **Sample Cloud Service** service
-            - `Administrator` platform access
--->
 
-<!-- NO PERMISSIONS FOR MODULE
-If no permissions are required for the module, uncomment the following
-statement instead the previous block.
--->
+<!-- BEGIN EXAMPLES HOOK -->
+## Examples
 
-<!-- No permissions are needed to run this module.-->
-<!-- END MODULE HOOK -->
+- [ Example creating arbitrary, username_password and imported_cert type secrets](examples/complete)
+<!-- END EXAMPLES HOOK -->
+
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
 
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.51.0 |
 
 ### Modules
 
@@ -156,27 +126,44 @@ No modules.
 
 ### Resources
 
-No resources.
+| Name | Type |
+|------|------|
+| [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
+| [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
+| [ibm_sm_username_password_secret.username_password_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_username_password_secret) | resource |
 
 ### Inputs
 
-No inputs.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| <a name="input_imported_cert_certificate"></a> [imported\_cert\_certificate](#input\_imported\_cert\_certificate) | The TLS certificate to import. | `string` | `null` | no |
+| <a name="input_imported_cert_intermediate"></a> [imported\_cert\_intermediate](#input\_imported\_cert\_intermediate) | (optional) The intermediate certificate for the TLS certificate to import. | `string` | `null` | no |
+| <a name="input_imported_cert_private_key"></a> [imported\_cert\_private\_key](#input\_imported\_cert\_private\_key) | (optional) The private key for the TLS certificate to import. | `string` | `null` | no |
+| <a name="input_region"></a> [region](#input\_region) | The region where the Secrets Manager instance is deployed. | `string` | n/a | yes |
+| <a name="input_secret_description"></a> [secret\_description](#input\_secret\_description) | Description of the secret to create. | `string` | n/a | yes |
+| <a name="input_secret_group_id"></a> [secret\_group\_id](#input\_secret\_group\_id) | The ID of the secret group for the secret. If `null`, the `default` secret group is used. | `string` | `"default"` | no |
+| <a name="input_secret_labels"></a> [secret\_labels](#input\_secret\_labels) | Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (\|). | `list(string)` | `[]` | no |
+| <a name="input_secret_name"></a> [secret\_name](#input\_secret\_name) | Name of the secret to create. | `string` | n/a | yes |
+| <a name="input_secret_payload_password"></a> [secret\_payload\_password](#input\_secret\_payload\_password) | The payload (for arbitrary secrets) or password (for username and password credentials) of the secret. | `string` | `""` | no |
+| <a name="input_secret_type"></a> [secret\_type](#input\_secret\_type) | Type of secret to create, must be one of: arbitrary, username\_password, imported\_cert | `string` | n/a | yes |
+| <a name="input_secret_user_pass_auto_rotation"></a> [secret\_user\_pass\_auto\_rotation](#input\_secret\_user\_pass\_auto\_rotation) | Whether to configure automatic rotation. Applies only to the `username_password` secret type. | `bool` | `true` | no |
+| <a name="input_secret_user_pass_auto_rotation_interval"></a> [secret\_user\_pass\_auto\_rotation\_interval](#input\_secret\_user\_pass\_auto\_rotation\_interval) | Specifies the rotation interval for the rotation unit. | `number` | `90` | no |
+| <a name="input_secret_user_pass_auto_rotation_unit"></a> [secret\_user\_pass\_auto\_rotation\_unit](#input\_secret\_user\_pass\_auto\_rotation\_unit) | Specifies the unit of time for rotation of a username\_password secret. Acceptable values are `day` or `month`. | `string` | `"day"` | no |
+| <a name="input_secret_username"></a> [secret\_username](#input\_secret\_username) | Username of the secret to create. Applies only to `username_password` secret types. When `null`, an `arbitrary` secret is created. | `string` | `null` | no |
+| <a name="input_secrets_manager_guid"></a> [secrets\_manager\_guid](#input\_secrets\_manager\_guid) | The instance ID of the Secrets Manager instance where the secret will be added. | `string` | n/a | yes |
+| <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | The service endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private` | `string` | `"public"` | no |
 
 ### Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_secret_crn"></a> [secret\_crn](#output\_secret\_crn) | CRN of the created Secret |
+| <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
+| <a name="output_user_pass_next_rotation_date"></a> [user\_pass\_next\_rotation\_date](#output\_user\_pass\_next\_rotation\_date) | Next rotation data for username\_password secret |
+| <a name="output_user_pass_rotation"></a> [user\_pass\_rotation](#output\_user\_pass\_rotation) | Status of auto-rotation for username\_password secret |
+| <a name="output_user_pass_rotation_interval"></a> [user\_pass\_rotation\_interval](#output\_user\_pass\_rotation\_interval) | Rotation frecuency for username\_password secret |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
-<!-- BEGIN EXAMPLES HOOK -->
-## Examples
-
-- [ Basic example](examples/basic)
-- [ Complete example](examples/complete)
-<!-- END EXAMPLES HOOK -->
-
-<!-- BEGIN CONTRIBUTING HOOK -->
-
-<!-- Leave this section as is so that your module has a link to local development environment set up steps for contributors to follow -->
 ## Contributing
 
 You can report issues and request features for this module in GitHub issues in the module repo. See [Report an issue or request a feature](https://github.com/terraform-ibm-modules/.github/blob/main/.github/SUPPORT.md).

@@ -1,4 +1,8 @@
-# Complete example
+# Example creating arbitrary, username_password and imported_cert type secrets
 
-<!-- There is a pre-commit hook that will take the title of each example add include it in the repos main README.md  -->
-<!-- Add text below should describe exactly what resources are provisioned / configured by the example  -->
+- Creates new secrets-manager instance (if existing instance GUID not passed in)
+- Creates new secret group
+- Creates an arbitrary type secret in the secret group
+- Creates a username_password type secret in the secret group
+- Creates a TLS cert, and adds it to secrets manager as an imported_cert secret type in the secret group
+- Retrieves metadata for all the secrets created
