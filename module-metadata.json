@@ -211,6 +211,11 @@
       "type": "string",
       "description": "The service endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private`",
       "default": "public",
+      "source": [
+        "ibm_sm_arbitrary_secret.arbitrary_secret.endpoint_type",
+        "ibm_sm_imported_certificate.imported_cert.endpoint_type",
+        "ibm_sm_username_password_secret.username_password_secret.endpoint_type"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 91
@@ -283,6 +288,7 @@
       "attributes": {
         "count": "secret_type",
         "description": "secret_description",
+        "endpoint_type": "service_endpoints",
         "instance_id": "secrets_manager_guid",
         "labels": "secret_labels",
         "name": "secret_name",
@@ -305,6 +311,7 @@
       "attributes": {
         "count": "secret_type",
         "description": "secret_description",
+        "endpoint_type": "service_endpoints",
         "instance_id": "secrets_manager_guid",
         "labels": "secret_labels",
         "name": "secret_name",
@@ -316,7 +323,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 73
+        "line": 75
       }
     },
     "ibm_sm_username_password_secret.username_password_secret": {
@@ -326,6 +333,7 @@
       "attributes": {
         "count": "secret_type",
         "description": "secret_description",
+        "endpoint_type": "service_endpoints",
         "instance_id": "secrets_manager_guid",
         "labels": "secret_labels",
         "name": "secret_name",
@@ -339,7 +347,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 43
       }
     }
   },
