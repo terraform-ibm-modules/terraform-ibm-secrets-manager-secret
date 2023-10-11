@@ -37,6 +37,7 @@ resource "ibm_sm_arbitrary_secret" "arbitrary_secret" {
   description     = var.secret_description
   labels          = var.secret_labels
   payload         = var.secret_payload_password
+  endpoint_type   = var.service_endpoints
 }
 
 resource "ibm_sm_username_password_secret" "username_password_secret" {
@@ -49,6 +50,7 @@ resource "ibm_sm_username_password_secret" "username_password_secret" {
   labels          = var.secret_labels
   username        = var.secret_username
   password        = var.secret_payload_password
+  endpoint_type   = var.service_endpoints
 
   ## This for_each block is NOT a loop to attach to multiple rotation blocks.
   ## This block is only used to conditionally add rotation block depending on var.sm_iam_secret_auto_rotation
@@ -81,6 +83,7 @@ resource "ibm_sm_imported_certificate" "imported_cert" {
   certificate     = local.imported_cert_certificate
   private_key     = local.imported_cert_private_key
   intermediate    = local.imported_cert_intermediate
+  endpoint_type   = var.service_endpoints
 }
 
 # Parse secret ID and generate data header for secrets
