@@ -39,3 +39,9 @@ variable "existing_sm_instance_region" {
   description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_guid"
   default     = null
 }
+
+variable "service_endpoints" {
+  type        = string
+  description = "The types of service endpoints to set on the Secrets Manager instance. Possible values are public, private or public-and-private."
+  default     = "public-and-private"
+}
