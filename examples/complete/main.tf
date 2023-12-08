@@ -13,7 +13,7 @@ locals {
       ? local.validate_sm_region_msg
   : ""))
 
-  sm_guid   = var.existing_sm_instance_guid == null ? ibm_resource_instance.secrets_manager[0].guid : var.existing_sm_instance_guid
+  sm_guid   = var.existing_sm_instance_guid == null ? module.secrets_manager.secrets_manager_guid : var.existing_sm_instance_guid
   sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
 
   secret_labels = [var.prefix, var.region]
@@ -35,17 +35,13 @@ module "resource_group" {
 # Secrets Manager
 ##############################################################################
 
-resource "ibm_resource_instance" "secrets_manager" {
-  count             = var.existing_sm_instance_guid == null ? 1 : 0
-  name              = "${var.prefix}-sm-instance"
-  service           = "secrets-manager"
-  plan              = var.sm_service_plan
-  location          = var.region
-  resource_group_id = module.resource_group.resource_group_id
-  tags              = var.resource_tags
-  timeouts {
-    create = "20m" # Extending provisioning time to 20 minutes
-  }
+module "secrets_manager" {
+  source               = "terraform-ibm-modules/secrets-manager/ibm"
+  version              = "1.0.0"
+  resource_group_id    = module.resource_group.resource_group_id
+  region               = local.sm_region
+  secrets_manager_name = "${var.prefix}-secrets-manager"
+  sm_service_plan      = var.sm_service_plan
 }
 
 ##############################################################################
