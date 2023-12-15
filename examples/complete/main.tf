@@ -42,7 +42,8 @@ module "secrets_manager" {
   region               = local.sm_region
   secrets_manager_name = "${var.prefix}-secrets-manager"
   sm_service_plan      = var.sm_service_plan
-  service_endpoints    = var.service_endpoints
+  service_endpoints    = "public-and-private"
+  sm_tags              = var.resource_tags
 }
 
 ##############################################################################

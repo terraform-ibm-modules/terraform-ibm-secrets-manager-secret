@@ -28,6 +28,12 @@ variable "resource_group" {
   default     = null
 }
 
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to any created resources"
+  default     = []
+}
+
 variable "existing_sm_instance_guid" {
   type        = string
   description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned"
@@ -38,10 +44,4 @@ variable "existing_sm_instance_region" {
   type        = string
   description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_guid"
   default     = null
-}
-
-variable "service_endpoints" {
-  type        = string
-  description = "The types of service endpoints to set on the Secrets Manager instance. Possible values are public, private or public-and-private."
-  default     = "public-and-private"
 }
