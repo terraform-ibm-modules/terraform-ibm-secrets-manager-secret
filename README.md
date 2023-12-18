@@ -35,7 +35,17 @@ The following attributes and parameters are supported only when creating importe
 - `imported_cert_private_key`: Optional private key for the TLS certificate to be imported. Defaults to `null`.
 - `imported_cert_intermediate`: Optional intermediate certificate for the TLS certificate to be imported. Defaults to `null`.
 
-## Usage
+<!-- Below content is automatically populated via pre-commit hook -->
+<!-- BEGIN OVERVIEW HOOK -->
+## Overview
+* [terraform-ibm-secrets-manager-secret](#terraform-ibm-secrets-manager-secret)
+* [Examples](./examples)
+    * [Example creating arbitrary, username_password and imported_cert type secrets](./examples/complete)
+* [Contributing](#contributing)
+<!-- END OVERVIEW HOOK -->
+
+## terraform-ibm-secrets-manager-secret
+### Usage
 
 ```hcl
 ##############################################################################
@@ -105,12 +115,6 @@ You need the following permissions to run this module.
     - **Secrets Manager** service
         - `Editor` platform access
         - `Manager` service access
-
-<!-- BEGIN EXAMPLES HOOK -->
-## Examples
-
-- [ Example creating arbitrary, username_password and imported_cert type secrets](examples/complete)
-<!-- END EXAMPLES HOOK -->
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
