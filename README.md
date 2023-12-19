@@ -105,7 +105,7 @@ module "secret_manager_imported_cert secret" {
 }
 ```
 
-## Required IAM access policies
+### Required IAM access policies
 You need the following permissions to run this module.
 
 - Account Management
