@@ -13,27 +13,43 @@ The module supports the following secret types:
 - [Arbitrary](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-arbitrary-secrets&interface=ui)
 - [User credentials](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-user-credentials&interface=ui)
 - [Imported Certificate](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-certificates&interface=api#import-certificates)
+- [Service Credentials](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-service-credentials&interface=api)
 
-The following attributes and parameters are supported for both secret types:
+The following attributes and parameters are supported for all secret types:
 
 - `secret_group_id`: When `null`, the `default` secret-group is used.
 - `secret_name`: The name of the secret that is created.
 - `secret_description`: The description of the secret.
+- `secret_type` : The type of the secret.
+- `secret_labels` : Any labels to attach to the secret.
+
+The following attributes and paramters are supported when storing arbitrary secrets:
+
 - `secret_payload_password`: The payload (for arbitrary secrets) or password (for username and password credentials) of the secret.
 
-The following attributes and parameters are supported only when storing user credentials:
+The following attributes and parameters are supported when storing user credentials:
 
+- `secret_payload_password`: The payload (for arbitrary secrets) or password (for username and password credentials) of the secret.
 - `secret_username`: The username of the secret that is created. Applicable only to the `username_password` secret type. When the parameter is `null`, an `arbitrary` secret is created.
-- `secret_user_pass_auto_rotation`: Configures automatic rotation. Default is `true`.
-- `secret_user_pass_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
-- `secret_user_pass_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `90`.
+- `secret_auto_rotation`: Configures automatic rotation. Default is `true`.
+- `secret_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
+- `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `90`.
 
-The following attributes and parameters are supported only when creating imported certificates:
+The following attributes and parameters are supported when creating imported certificates:
 
-- `imported_cert`: specify if imported certificate secret type will be created, defaults to `false`.
 - `imported_cert_certificate`: The TLS certificate to be imported. Defaults to `null`.
 - `imported_cert_private_key`: Optional private key for the TLS certificate to be imported. Defaults to `null`.
 - `imported_cert_intermediate`: Optional intermediate certificate for the TLS certificate to be imported. Defaults to `null`.
+
+The following attributes and parameters are supported when creating service credentials:
+
+service_credentials_source_service_crn
+service_credentials_source_service_role
+- `service_credentials_source_service_crn`: The CRN of the target service instance to create the service credentials.
+- `service_credentials_source_service_role`: The service specific role to give the service credentials.
+- `secret_auto_rotation`: Configures automatic rotation. Default is `true`.
+- `secret_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
+- `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `90`.
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -53,7 +69,6 @@ The following attributes and parameters are supported only when creating importe
 ##############################################################################
 
 module "secrets_manager_arbitrary_secret" {
-  # Replace "master" with a GIT release version to lock into a specific release
   source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
   version                 = "3.1.1"
   region                  = "us-south"
@@ -61,6 +76,7 @@ module "secrets_manager_arbitrary_secret" {
   secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
   secret_name             = "example-arbitrary-secret"
   secret_description      = "Extended description for the arbirtary secret."
+  secret_type             = "arbitrary"
   secret_payload_password = "secret-data" #pragma: allowlist secret
 }
 ```
@@ -71,7 +87,6 @@ module "secrets_manager_arbitrary_secret" {
 ##############################################################################
 
 module "secrets_manager_user_pass_secret" {
-  # Replace "master" with a GIT release version to lock into a specific release
   source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
   version                 = "3.1.1"
   region                  = "us-south"
@@ -79,6 +94,7 @@ module "secrets_manager_user_pass_secret" {
   secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
   secret_name             = "example-user-pass-secret"
   secret_description      = "Extended description for the user pass secret."
+  secret_type             = "username_password"
   secret_payload_password = "secret-data" #pragma: allowlist secret
   secret_username         = "terraform-user"
 }
@@ -90,7 +106,6 @@ module "secrets_manager_user_pass_secret" {
 ##############################################################################
 
 module "secret_manager_imported_cert secret" {
-  # Replace "master" with a GIT release version to lock into a specific release
   source                     = "terraform-ibm-modules/secrets-manager-secret/ibm"
   version                    = "3.1.1"
   region                     = "us-south
@@ -98,11 +113,31 @@ module "secret_manager_imported_cert secret" {
   secret_group_id            = "432b91f1-ff6d-4b47-9f06-82debc236d90"
   secret_name                = "example-imported-cert-secret"
   secret_description         = "Extended description for the imported cert secret."
-  imported_cert              = true
+  secret_type                = "imported_cert"
   imported_cert_certificate  = module.certificate.cert_pem
   imported_cert_private_key  = module.certificate.private_key #pragma: allowlist secret
   imported_cert_intermediate = module.certificate.ca_cert_pem
 }
+```
+
+```hcl
+##############################################################################
+# Create Service Credentials
+##############################################################################
+
+module "secret_manager_service_credential" {
+  source                                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                                 = "3.1.1"
+  region                                  = "us-south
+  secrets_manager_guid                    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
+  secret_group_id                         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
+  secret_name                             = "example-imported-cert-secret"
+  secret_description                      = "Extended description for the service credentials secret."
+  secret_type                             = "service_credentials"
+  service_credentials_source_service_crn  = module.cloud_object_storage.cos_instance_id
+  service_credentials_source_service_role = "Writer"
+}
+
 ```
 
 ### Required IAM access policies

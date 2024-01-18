@@ -101,7 +101,7 @@ module "secrets_manager_user_pass_secret" {
   secret_labels           = local.secret_labels
 }
 
-# retrieving information about the arbitrary secret
+# retrieving information about the userpass secret
 data "ibm_sm_username_password_secret" "user_pass_secret" {
   instance_id = local.sm_guid
   region      = local.sm_region
@@ -127,7 +127,7 @@ module "secrets_manager_user_pass_no_rotate_secret" {
   secret_auto_rotation    = false
 }
 
-# retrieving information about the arbitrary secret
+# retrieving information about the userpass secret
 data "ibm_sm_username_password_secret" "user_pass_no_rotate_secret" {
   instance_id = local.sm_guid
   region      = local.sm_region
