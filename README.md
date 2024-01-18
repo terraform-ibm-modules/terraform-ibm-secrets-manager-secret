@@ -134,6 +134,7 @@ No modules.
 |------|------|
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
+| [ibm_sm_service_credentials_secret.service_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
 | [ibm_sm_username_password_secret.username_password_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_username_password_secret) | resource |
 
 ### Inputs
@@ -144,17 +145,20 @@ No modules.
 | <a name="input_imported_cert_intermediate"></a> [imported\_cert\_intermediate](#input\_imported\_cert\_intermediate) | (optional) The intermediate certificate for the TLS certificate to import. | `string` | `null` | no |
 | <a name="input_imported_cert_private_key"></a> [imported\_cert\_private\_key](#input\_imported\_cert\_private\_key) | (optional) The private key for the TLS certificate to import. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where the Secrets Manager instance is deployed. | `string` | n/a | yes |
+| <a name="input_secret_auto_rotation"></a> [secret\_auto\_rotation](#input\_secret\_auto\_rotation) | Whether to configure automatic rotation. Applies only to the `username_password` and `service_credentials` secret types. | `bool` | `true` | no |
+| <a name="input_secret_auto_rotation_interval"></a> [secret\_auto\_rotation\_interval](#input\_secret\_auto\_rotation\_interval) | Specifies the rotation interval for the rotation unit. | `number` | `89` | no |
+| <a name="input_secret_auto_rotation_unit"></a> [secret\_auto\_rotation\_unit](#input\_secret\_auto\_rotation\_unit) | Specifies the unit of time for rotation of a username\_password secret. Acceptable values are `day` or `month`. | `string` | `"day"` | no |
 | <a name="input_secret_description"></a> [secret\_description](#input\_secret\_description) | Description of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_group_id"></a> [secret\_group\_id](#input\_secret\_group\_id) | The ID of the secret group for the secret. If `null`, the `default` secret group is used. | `string` | `"default"` | no |
 | <a name="input_secret_labels"></a> [secret\_labels](#input\_secret\_labels) | Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (\|). | `list(string)` | `[]` | no |
 | <a name="input_secret_name"></a> [secret\_name](#input\_secret\_name) | Name of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_payload_password"></a> [secret\_payload\_password](#input\_secret\_payload\_password) | The payload (for arbitrary secrets) or password (for username and password credentials) of the secret. | `string` | `""` | no |
-| <a name="input_secret_type"></a> [secret\_type](#input\_secret\_type) | Type of secret to create, must be one of: arbitrary, username\_password, imported\_cert | `string` | n/a | yes |
-| <a name="input_secret_user_pass_auto_rotation"></a> [secret\_user\_pass\_auto\_rotation](#input\_secret\_user\_pass\_auto\_rotation) | Whether to configure automatic rotation. Applies only to the `username_password` secret type. | `bool` | `true` | no |
-| <a name="input_secret_user_pass_auto_rotation_interval"></a> [secret\_user\_pass\_auto\_rotation\_interval](#input\_secret\_user\_pass\_auto\_rotation\_interval) | Specifies the rotation interval for the rotation unit. | `number` | `90` | no |
-| <a name="input_secret_user_pass_auto_rotation_unit"></a> [secret\_user\_pass\_auto\_rotation\_unit](#input\_secret\_user\_pass\_auto\_rotation\_unit) | Specifies the unit of time for rotation of a username\_password secret. Acceptable values are `day` or `month`. | `string` | `"day"` | no |
+| <a name="input_secret_type"></a> [secret\_type](#input\_secret\_type) | Type of secret to create, must be one of: arbitrary, username\_password, imported\_cert, service\_credentials | `string` | n/a | yes |
 | <a name="input_secret_username"></a> [secret\_username](#input\_secret\_username) | Username of the secret to create. Applies only to `username_password` secret types. When `null`, an `arbitrary` secret is created. | `string` | `null` | no |
 | <a name="input_secrets_manager_guid"></a> [secrets\_manager\_guid](#input\_secrets\_manager\_guid) | The instance ID of the Secrets Manager instance where the secret will be added. | `string` | n/a | yes |
+| <a name="input_service_credentials_source_service_crn"></a> [service\_credentials\_source\_service\_crn](#input\_service\_credentials\_source\_service\_crn) | The CRN of the source service instance to create the service credential. | `string` | `null` | no |
+| <a name="input_service_credentials_source_service_role"></a> [service\_credentials\_source\_service\_role](#input\_service\_credentials\_source\_service\_role) | The role to give the service credential in the source service. | `string` | `null` | no |
+| <a name="input_service_credentials_ttl"></a> [service\_credentials\_ttl](#input\_service\_credentials\_ttl) | The time-to-live (TTL) to assign to generated service credentials (in seconds). | `number` | `"7776000"` | no |
 | <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | The service endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private` | `string` | `"public"` | no |
 
 ### Outputs
@@ -163,9 +167,9 @@ No modules.
 |------|-------------|
 | <a name="output_secret_crn"></a> [secret\_crn](#output\_secret\_crn) | CRN of the created Secret |
 | <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
-| <a name="output_user_pass_next_rotation_date"></a> [user\_pass\_next\_rotation\_date](#output\_user\_pass\_next\_rotation\_date) | Next rotation data for username\_password secret |
-| <a name="output_user_pass_rotation"></a> [user\_pass\_rotation](#output\_user\_pass\_rotation) | Status of auto-rotation for username\_password secret |
-| <a name="output_user_pass_rotation_interval"></a> [user\_pass\_rotation\_interval](#output\_user\_pass\_rotation\_interval) | Rotation frecuency for username\_password secret |
+| <a name="output_user_pass_next_rotation_date"></a> [user\_pass\_next\_rotation\_date](#output\_user\_pass\_next\_rotation\_date) | Next rotation data for secret (if applicable) |
+| <a name="output_user_pass_rotation"></a> [user\_pass\_rotation](#output\_user\_pass\_rotation) | Status of auto-rotation for secret |
+| <a name="output_user_pass_rotation_interval"></a> [user\_pass\_rotation\_interval](#output\_user\_pass\_rotation\_interval) | Rotation frecuency for secret (if applicable) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contributing

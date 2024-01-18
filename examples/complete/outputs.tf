@@ -73,3 +73,13 @@ output "imported_cert_secret_crn" {
   description = "CRN of the created imported_cert secret"
   value       = module.secret_manager_imported_cert.secret_crn
 }
+
+output "service_credential_secret_id" {
+  description = "ID of the created service_credential secret"
+  value       = module.secret_manager_service_credential.secret_id
+}
+
+output "service_credential_secret_crn" {
+  description = "CRN of the created service_credential secret"
+  value       = module.secret_manager_service_credential.secret_crn
+}

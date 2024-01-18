@@ -17,14 +17,15 @@ variable "secret_group_id" {
 }
 variable "secret_type" {
   type        = string
-  description = "Type of secret to create, must be one of: arbitrary, username_password, imported_cert"
+  description = "Type of secret to create, must be one of: arbitrary, username_password, imported_cert, service_credentials"
   validation {
     condition = anytrue([
-      var.secret_type == "arbitrary",         #checkov:skip=CKV_SECRET_6
-      var.secret_type == "username_password", #checkov:skip=CKV_SECRET_6
-      var.secret_type == "imported_cert",     #checkov:skip=CKV_SECRET_6
+      var.secret_type == "arbitrary",           #checkov:skip=CKV_SECRET_6
+      var.secret_type == "username_password",   #checkov:skip=CKV_SECRET_6
+      var.secret_type == "imported_cert",       #checkov:skip=CKV_SECRET_6
+      var.secret_type == "service_credentials", #checkov:skip=CKV_SECRET_6
     ])
-    error_message = "Only supported secrets types are arbitrary, username_password, or imported_cert"
+    error_message = "Only supported secrets types are arbitrary, username_password, imported_cert, or service_credentials"
   }
 }
 variable "imported_cert_certificate" {
@@ -72,20 +73,43 @@ variable "secret_payload_password" {
   sensitive   = true
   default     = "" #tfsec:ignore:general-secrets-no-plaintext-exposure
 }
-variable "secret_user_pass_auto_rotation" {
+variable "secret_auto_rotation" {
   type        = bool
-  description = "Whether to configure automatic rotation. Applies only to the `username_password` secret type."
+  description = "Whether to configure automatic rotation. Applies only to the `username_password` and `service_credentials` secret types."
   default     = true
 }
-variable "secret_user_pass_auto_rotation_unit" {
+variable "secret_auto_rotation_unit" {
   type        = string
   description = "Specifies the unit of time for rotation of a username_password secret. Acceptable values are `day` or `month`."
   default     = "day" #tfsec:ignore:general-secrets-no-plaintext-exposure
 }
-variable "secret_user_pass_auto_rotation_interval" {
+variable "secret_auto_rotation_interval" {
   type        = number
   description = "Specifies the rotation interval for the rotation unit."
-  default     = 90
+  default     = 89
+}
+
+variable "service_credentials_ttl" {
+  type        = number
+  description = "The time-to-live (TTL) to assign to generated service credentials (in seconds)."
+  default     = "7776000" # 90 days
+
+  validation {
+    condition     = (var.service_credentials_ttl >= 86400) && (var.service_credentials_ttl <= 7776000)
+    error_message = "TTL must be between 86400 (1 day) and 7776000 (90 days)."
+  }
+}
+
+variable "service_credentials_source_service_crn" {
+  type        = string
+  description = "The CRN of the source service instance to create the service credential."
+  default     = null
+}
+
+variable "service_credentials_source_service_role" {
+  type        = string
+  description = "The role to give the service credential in the source service."
+  default     = null
 }
 
 variable "service_endpoints" {
