@@ -43,8 +43,6 @@ The following attributes and parameters are supported when creating imported cer
 
 The following attributes and parameters are supported when creating service credentials:
 
-service_credentials_source_service_crn
-service_credentials_source_service_role
 - `service_credentials_source_service_crn`: The CRN of the target service instance to create the service credentials.
 - `service_credentials_source_service_role`: The service specific role to give the service credentials.
 - `secret_auto_rotation`: Configures automatic rotation. Default is `true`.
