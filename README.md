@@ -33,7 +33,7 @@ The following attributes and parameters are supported when storing user credenti
 - `secret_username`: The username of the secret that is created. Applicable only to the `username_password` secret type. When the parameter is `null`, an `arbitrary` secret is created.
 - `secret_auto_rotation`: Configures automatic rotation. Default is `true`.
 - `secret_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
-- `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `90`.
+- `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `89`.
 
 The following attributes and parameters are supported when creating imported certificates:
 
@@ -49,7 +49,7 @@ service_credentials_source_service_role
 - `service_credentials_source_service_role`: The service specific role to give the service credentials.
 - `secret_auto_rotation`: Configures automatic rotation. Default is `true`.
 - `secret_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
-- `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `90`.
+- `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `89`.
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -137,7 +137,6 @@ module "secret_manager_service_credential" {
   service_credentials_source_service_crn  = module.cloud_object_storage.cos_instance_id
   service_credentials_source_service_role = "Writer"
 }
-
 ```
 
 ### Required IAM access policies
