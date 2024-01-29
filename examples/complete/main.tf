@@ -211,6 +211,7 @@ module "cloud_object_storage" {
 #create a service authorization between Secrets Manager and the target service (COS)
 resource "ibm_iam_authorization_policy" "policy" {
   source_service_name         = "secrets-manager"
+  source_resource_instance_id = module.secrets_manager.secrets_manager_guid
   target_service_name         = "cloud-object-storage"
   target_resource_instance_id = module.cloud_object_storage.cos_instance_guid
   roles                       = ["Key Manager"]

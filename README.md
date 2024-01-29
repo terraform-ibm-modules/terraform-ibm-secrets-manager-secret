@@ -123,6 +123,8 @@ module "secret_manager_imported_cert secret" {
 # Create Service Credentials
 ##############################################################################
 
+# You will also need a service authorization between Secrets Manager and the target service. See the provided example if you need to create one.
+
 module "secret_manager_service_credential" {
   source                                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
   version                                 = "3.1.1"
