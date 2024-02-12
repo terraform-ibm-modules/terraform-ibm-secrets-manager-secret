@@ -68,7 +68,7 @@ The following attributes and parameters are supported when creating service cred
 
 module "secrets_manager_arbitrary_secret" {
   source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
-  version                 = "3.1.1"
+  version                 = "latest" # Replace "latest" with a release version to lock into a specific release
   region                  = "us-south"
   secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
@@ -86,7 +86,7 @@ module "secrets_manager_arbitrary_secret" {
 
 module "secrets_manager_user_pass_secret" {
   source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
-  version                 = "3.1.1"
+  version                 = "latest" # Replace "latest" with a release version to lock into a specific release
   region                  = "us-south"
   secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
@@ -105,7 +105,7 @@ module "secrets_manager_user_pass_secret" {
 
 module "secret_manager_imported_cert secret" {
   source                     = "terraform-ibm-modules/secrets-manager-secret/ibm"
-  version                    = "3.1.1"
+  version                    = "latest" # Replace "latest" with a release version to lock into a specific release
   region                     = "us-south
   secrets_manager_guid       = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id            = "432b91f1-ff6d-4b47-9f06-82debc236d90"
@@ -123,15 +123,15 @@ module "secret_manager_imported_cert secret" {
 # Create Service Credentials
 ##############################################################################
 
-# You will also need a service authorization between Secrets Manager and the target service. See the provided example if you need to create one.
+# A service authorization between Secrets Manager and the target service is required. The "complete" example includes a sample service authorization.
 
 module "secret_manager_service_credential" {
   source                                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
-  version                                 = "3.1.1"
+  version                                 = "latest" # Replace "latest" with a release version to lock into a specific release
   region                                  = "us-south
   secrets_manager_guid                    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id                         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
-  secret_name                             = "example-imported-cert-secret"
+  secret_name                             = "example-service-credential"
   secret_description                      = "Extended description for the service credentials secret."
   secret_type                             = "service_credentials"
   service_credentials_source_service_crn  = module.cloud_object_storage.cos_instance_id
@@ -201,9 +201,9 @@ No modules.
 |------|-------------|
 | <a name="output_secret_crn"></a> [secret\_crn](#output\_secret\_crn) | CRN of the created Secret |
 | <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
-| <a name="output_user_pass_next_rotation_date"></a> [user\_pass\_next\_rotation\_date](#output\_user\_pass\_next\_rotation\_date) | Next rotation data for secret (if applicable) |
-| <a name="output_user_pass_rotation"></a> [user\_pass\_rotation](#output\_user\_pass\_rotation) | Status of auto-rotation for secret |
-| <a name="output_user_pass_rotation_interval"></a> [user\_pass\_rotation\_interval](#output\_user\_pass\_rotation\_interval) | Rotation frecuency for secret (if applicable) |
+| <a name="output_secret_next_rotation_date"></a> [secret\_next\_rotation\_date](#output\_secret\_next\_rotation\_date) | Next rotation date for secret (if applicable) |
+| <a name="output_secret_rotation"></a> [secret\_rotation](#output\_secret\_rotation) | Status of auto-rotation for secret |
+| <a name="output_secret_rotation_interval"></a> [secret\_rotation\_interval](#output\_secret\_rotation\_interval) | Rotation frecuency for secret (if applicable) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contributing

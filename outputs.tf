@@ -12,18 +12,18 @@ output "secret_crn" {
   value       = local.secret_crn
 }
 
-output "user_pass_rotation" {
+output "secret_rotation" {
   description = "Status of auto-rotation for secret"
   value       = local.secret_auto_rotation
 }
 
-output "user_pass_rotation_interval" {
+output "secret_rotation_interval" {
   description = "Rotation frecuency for secret (if applicable)"
   value       = local.secret_auto_rotation_frequency
 }
 
-output "user_pass_next_rotation_date" {
-  description = "Next rotation data for secret (if applicable)"
+output "secret_next_rotation_date" {
+  description = "Next rotation date for secret (if applicable)"
   value       = local.secret_next_rotation_date
 }
 
