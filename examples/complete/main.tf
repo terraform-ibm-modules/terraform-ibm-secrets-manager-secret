@@ -212,7 +212,7 @@ module "cloud_object_storage" {
 resource "ibm_iam_authorization_policy" "policy" {
   depends_on                  = [module.cloud_object_storage]
   source_service_name         = "secrets-manager"
-  source_resource_instance_id = module.secrets_manager.secrets_manager_guid
+  source_resource_instance_id = local.sm_guid
   target_service_name         = "cloud-object-storage"
   target_resource_instance_id = module.cloud_object_storage.cos_instance_guid
   roles                       = ["Key Manager"]
@@ -220,6 +220,7 @@ resource "ibm_iam_authorization_policy" "policy" {
 
 # create service credentials secret
 module "secret_manager_service_credential" {
+  depends_on                              = [ibm_iam_authorization_policy.policy]
   source                                  = "../.."
   region                                  = local.sm_region
   secrets_manager_guid                    = local.sm_guid
