@@ -101,7 +101,7 @@ module "secrets_manager_user_pass_secret" {
   secret_labels           = local.secret_labels
 }
 
-# retrieving information about the arbitrary secret
+# retrieving information about the userpass secret
 data "ibm_sm_username_password_secret" "user_pass_secret" {
   instance_id = local.sm_guid
   region      = local.sm_region
@@ -114,20 +114,20 @@ data "ibm_sm_username_password_secret" "user_pass_secret" {
 
 # create username / password secret
 module "secrets_manager_user_pass_no_rotate_secret" {
-  source                         = "../.."
-  region                         = local.sm_region
-  secrets_manager_guid           = local.sm_guid
-  secret_group_id                = module.secrets_manager_group.secret_group_id
-  secret_name                    = "${var.prefix}-user-pass-no-rotate-secret"
-  secret_description             = "created by secrets-manager-secret-module complete example"
-  secret_type                    = "username_password" #checkov:skip=CKV_SECRET_6
-  secret_payload_password        = local.payload
-  secret_username                = "terraform-user" #checkov:skip=CKV_SECRET_6
-  secret_labels                  = local.secret_labels
-  secret_user_pass_auto_rotation = false
+  source                  = "../.."
+  region                  = local.sm_region
+  secrets_manager_guid    = local.sm_guid
+  secret_group_id         = module.secrets_manager_group.secret_group_id
+  secret_name             = "${var.prefix}-user-pass-no-rotate-secret"
+  secret_description      = "created by secrets-manager-secret-module complete example"
+  secret_type             = "username_password" #checkov:skip=CKV_SECRET_6
+  secret_payload_password = local.payload
+  secret_username         = "terraform-user" #checkov:skip=CKV_SECRET_6
+  secret_labels           = local.secret_labels
+  secret_auto_rotation    = false
 }
 
-# retrieving information about the arbitrary secret
+# retrieving information about the userpass secret
 data "ibm_sm_username_password_secret" "user_pass_no_rotate_secret" {
   instance_id = local.sm_guid
   region      = local.sm_region
@@ -189,4 +189,45 @@ module "secret_manager_imported_cert" {
   imported_cert_certificate  = resource.tls_locally_signed_cert.cert.cert_pem
   imported_cert_private_key  = resource.tls_private_key.key.private_key_pem
   imported_cert_intermediate = resource.tls_self_signed_cert.ca_cert.cert_pem
+}
+
+##############################################################################
+# Example working with service credentials secret
+##############################################################################
+
+# create a COS instance to create the service credential for
+module "cloud_object_storage" {
+  source                 = "terraform-ibm-modules/cos/ibm"
+  version                = "7.1.4"
+  resource_group_id      = module.resource_group.resource_group_id
+  region                 = var.region
+  cos_instance_name      = "${var.prefix}-cos"
+  cos_tags               = var.resource_tags
+  bucket_name            = "${var.prefix}-bucket"
+  retention_enabled      = false # disable retention for test environments - enable for stage/prod
+  kms_encryption_enabled = false
+}
+
+#create a service authorization between Secrets Manager and the target service (COS)
+resource "ibm_iam_authorization_policy" "policy" {
+  depends_on                  = [module.cloud_object_storage]
+  source_service_name         = "secrets-manager"
+  source_resource_instance_id = local.sm_guid
+  target_service_name         = "cloud-object-storage"
+  target_resource_instance_id = module.cloud_object_storage.cos_instance_guid
+  roles                       = ["Key Manager"]
+}
+
+# create service credentials secret
+module "secret_manager_service_credential" {
+  depends_on                              = [ibm_iam_authorization_policy.policy]
+  source                                  = "../.."
+  region                                  = local.sm_region
+  secrets_manager_guid                    = local.sm_guid
+  secret_name                             = "${var.prefix}-service-credentials"
+  secret_group_id                         = module.secrets_manager_group.secret_group_id
+  secret_description                      = "created by secrets-manager-secret-module complete example"
+  secret_type                             = "service_credentials" #checkov:skip=CKV_SECRET_6
+  service_credentials_source_service_crn  = module.cloud_object_storage.cos_instance_id
+  service_credentials_source_service_role = "Writer"
 }
