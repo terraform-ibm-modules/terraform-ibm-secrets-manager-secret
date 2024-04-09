@@ -175,6 +175,7 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_endpoint_type"></a> [endpoint\_type](#input\_endpoint\_type) | The endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private` | `string` | `"public"` | no |
 | <a name="input_imported_cert_certificate"></a> [imported\_cert\_certificate](#input\_imported\_cert\_certificate) | The TLS certificate to import. | `string` | `null` | no |
 | <a name="input_imported_cert_intermediate"></a> [imported\_cert\_intermediate](#input\_imported\_cert\_intermediate) | (optional) The intermediate certificate for the TLS certificate to import. | `string` | `null` | no |
 | <a name="input_imported_cert_private_key"></a> [imported\_cert\_private\_key](#input\_imported\_cert\_private\_key) | (optional) The private key for the TLS certificate to import. | `string` | `null` | no |
@@ -193,7 +194,6 @@ No modules.
 | <a name="input_service_credentials_source_service_crn"></a> [service\_credentials\_source\_service\_crn](#input\_service\_credentials\_source\_service\_crn) | The CRN of the source service instance to create the service credential. | `string` | `null` | no |
 | <a name="input_service_credentials_source_service_role"></a> [service\_credentials\_source\_service\_role](#input\_service\_credentials\_source\_service\_role) | The role to give the service credential in the source service. | `string` | `null` | no |
 | <a name="input_service_credentials_ttl"></a> [service\_credentials\_ttl](#input\_service\_credentials\_ttl) | The time-to-live (TTL) to assign to generated service credentials (in seconds). | `number` | `"7776000"` | no |
-| <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | The service endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private` | `string` | `"public"` | no |
 
 ### Outputs
 
