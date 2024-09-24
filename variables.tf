@@ -122,4 +122,10 @@ variable "endpoint_type" {
   }
 }
 
+variable "service_credentials_source_service_hmac" {
+  type        = bool
+  description = "The optional boolean parameter HMAC for creating specific kind of credentials"
+  default     = false
+}
+
 ##############################################################################
