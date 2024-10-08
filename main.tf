@@ -92,8 +92,8 @@ resource "ibm_sm_imported_certificate" "imported_cert" {
   endpoint_type   = var.endpoint_type
 }
 
-resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
-  count           = var.secret_type == "service_credentials" ? 1 : 0 #checkov:skip=CKV_SECRET_6
+resource "ibm_sm_service_credentials_secret" "service_credentials_secret_hmac" {
+  count           = var.secret_type == "service_credentials" && var.service_credentials_source_service_hmac == true ? 1 : 0 #checkov:skip=CKV_SECRET_6
   region          = var.region
   instance_id     = var.secrets_manager_guid
   secret_group_id = var.secret_group_id
@@ -114,6 +114,27 @@ resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
       "HMAC" : var.service_credentials_source_service_hmac
     }
   }
+}
+
+resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
+  count           = var.secret_type == "service_credentials" && var.service_credentials_source_service_hmac == false ? 1 : 0 #checkov:skip=CKV_SECRET_6
+  region          = var.region
+  instance_id     = var.secrets_manager_guid
+  secret_group_id = var.secret_group_id
+  name            = var.secret_name
+  description     = var.secret_description
+  labels          = var.secret_labels
+  ttl             = var.service_credentials_ttl
+  endpoint_type   = var.endpoint_type
+
+  source_service {
+    instance {
+      crn = var.service_credentials_source_service_crn
+    }
+    role {
+      crn = "crn:v1:bluemix:public:iam::::serviceRole:${var.service_credentials_source_service_role}"
+    }
+  }
 
   ## This for_each block is NOT a loop to attach to multiple rotation blocks.
   ## This block is only used to conditionally add rotation block depending on var.sm_iam_secret_auto_rotation
@@ -132,13 +153,13 @@ locals {
   secret_id = (
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].secret_id :
     var.secret_type == "imported_cert" ? ibm_sm_imported_certificate.imported_cert[0].secret_id :
-    var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].secret_id :
+    var.secret_type == "service_credentials" ? var.service_credentials_source_service_hmac == false ? ibm_sm_service_credentials_secret.service_credentials_secret[0].secret_id : ibm_sm_service_credentials_secret.service_credentials_secret_hmac[0].secret_id :
     var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].secret_id : null
   )
   secret_crn = (
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].crn :
     var.secret_type == "imported_cert" ? ibm_sm_imported_certificate.imported_cert[0].crn :
-    var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].crn :
+    var.secret_type == "service_credentials" ? var.service_credentials_source_service_hmac == false ? ibm_sm_service_credentials_secret.service_credentials_secret[0].crn : ibm_sm_service_credentials_secret.service_credentials_secret_hmac[0].crn :
     var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].crn : null
   )
   #tfsec:ignore:general-secrets-no-plaintext-exposure
@@ -146,7 +167,7 @@ locals {
   secret_next_rotation_date = (
     var.secret_auto_rotation == true ?
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].next_rotation_date :
-    var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].next_rotation_date : null : null
+    var.secret_type == "service_credentials" ? var.service_credentials_source_service_hmac == false ? ibm_sm_service_credentials_secret.service_credentials_secret[0].next_rotation_date : ibm_sm_service_credentials_secret.service_credentials_secret_hmac[0].next_rotation_date : null : null
   )
   secret_auto_rotation = (var.secret_type == "username_password" || var.secret_type == "service_credentials") ? var.secret_auto_rotation : null
 }

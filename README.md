@@ -169,6 +169,7 @@ No modules.
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
 | [ibm_sm_service_credentials_secret.service_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
+| [ibm_sm_service_credentials_secret.service_credentials_secret_hmac](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
 | [ibm_sm_username_password_secret.username_password_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_username_password_secret) | resource |
 
 ### Inputs
