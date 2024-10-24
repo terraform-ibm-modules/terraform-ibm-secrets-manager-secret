@@ -169,6 +169,7 @@ No modules.
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
 | [ibm_sm_service_credentials_secret.service_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
+| [ibm_sm_service_credentials_secret.service_credentials_secret_hmac](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
 | [ibm_sm_username_password_secret.username_password_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_username_password_secret) | resource |
 
 ### Inputs
@@ -192,6 +193,7 @@ No modules.
 | <a name="input_secret_username"></a> [secret\_username](#input\_secret\_username) | Username of the secret to create. Applies only to `username_password` secret types. When `null`, an `arbitrary` secret is created. | `string` | `null` | no |
 | <a name="input_secrets_manager_guid"></a> [secrets\_manager\_guid](#input\_secrets\_manager\_guid) | The instance ID of the Secrets Manager instance where the secret will be added. | `string` | n/a | yes |
 | <a name="input_service_credentials_source_service_crn"></a> [service\_credentials\_source\_service\_crn](#input\_service\_credentials\_source\_service\_crn) | The CRN of the source service instance to create the service credential. | `string` | `null` | no |
+| <a name="input_service_credentials_source_service_hmac"></a> [service\_credentials\_source\_service\_hmac](#input\_service\_credentials\_source\_service\_hmac) | The optional boolean parameter HMAC for creating specific kind of credentials. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters | `bool` | `false` | no |
 | <a name="input_service_credentials_source_service_role"></a> [service\_credentials\_source\_service\_role](#input\_service\_credentials\_source\_service\_role) | The role to give the service credential in the source service. | `string` | `null` | no |
 | <a name="input_service_credentials_ttl"></a> [service\_credentials\_ttl](#input\_service\_credentials\_ttl) | The time-to-live (TTL) to assign to generated service credentials (in seconds). | `number` | `"7776000"` | no |
 
