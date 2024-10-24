@@ -37,7 +37,7 @@ module "resource_group" {
 
 module "secrets_manager" {
   source               = "terraform-ibm-modules/secrets-manager/ibm"
-  version              = "1.15.1"
+  version              = "1.18.6"
   resource_group_id    = module.resource_group.resource_group_id
   region               = local.sm_region
   secrets_manager_name = "${var.prefix}-secrets-manager"
@@ -197,15 +197,19 @@ module "secret_manager_imported_cert" {
 
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
-  source                 = "terraform-ibm-modules/cos/ibm"
-  version                = "8.5.3"
-  resource_group_id      = module.resource_group.resource_group_id
-  region                 = var.region
-  cos_instance_name      = "${var.prefix}-cos"
-  cos_tags               = var.resource_tags
-  bucket_name            = "${var.prefix}-bucket"
-  retention_enabled      = false # disable retention for test environments - enable for stage/prod
-  kms_encryption_enabled = false
+  source                             = "terraform-ibm-modules/cos/ibm"
+  version                            = "8.11.15"
+  resource_group_id                  = module.resource_group.resource_group_id
+  region                             = var.region
+  cos_instance_name                  = "${var.prefix}-cos"
+  cos_tags                           = var.resource_tags
+  bucket_name                        = "${var.prefix}-bucket"
+  activity_tracker_read_data_events  = false
+  activity_tracker_write_data_events = false
+  request_metrics_enabled            = false
+  retention_enabled                  = false # disable retention for test environments - enable for stage/prod
+  kms_encryption_enabled             = false
+  usage_metrics_enabled              = false
 }
 
 #create a service authorization between Secrets Manager and the target service (COS)
