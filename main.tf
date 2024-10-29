@@ -93,6 +93,7 @@ resource "ibm_sm_imported_certificate" "imported_cert" {
 }
 
 # There are two sm cred secrets because adding HMAC parameter causes breaking change. Only one will be deployed.
+# Provider issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5739
 resource "ibm_sm_service_credentials_secret" "service_credentials_secret_hmac" {
   count           = var.secret_type == "service_credentials" && var.service_credentials_source_service_hmac == true ? 1 : 0 #checkov:skip=CKV_SECRET_6
   region          = var.region
