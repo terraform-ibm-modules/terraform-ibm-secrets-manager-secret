@@ -1,8 +1,7 @@
-# Example creating arbitrary, username_password and imported_cert type secrets
+# Private-Only Secret Manager example
 
-- Creates new secrets-manager instance (if existing instance GUID not passed in)
-- Creates new secret group
-- Creates an arbitrary type secret in the secret group
-- Creates a username_password type secret in the secret group
-- Creates a TLS cert, and adds it to secrets manager as an imported_cert secret type in the secret group
-- Retrieves metadata for all the secrets created
+An end-to-end example that uses a private-only Secret Manager. This example uses the IBM Cloud terraform provider to:
+ - Create a new resource group if one is not passed in.
+ - Create a new secrets manager if one is not passed in.
+ - Create a new secrets manager group and private secret engine if existing secrets manager is not passed in.
+ - Create a new private certifcate inside a secrets manager.

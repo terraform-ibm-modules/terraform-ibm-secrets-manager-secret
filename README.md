@@ -55,6 +55,7 @@ The following attributes and parameters are supported when creating service cred
 * [terraform-ibm-secrets-manager-secret](#terraform-ibm-secrets-manager-secret)
 * [Examples](./examples)
     * [Example creating arbitrary, username_password and imported_cert type secrets](./examples/complete)
+    * [Private-Only Secret Manager example](./examples/private)
 * [Contributing](#contributing)
 <!-- END OVERVIEW HOOK -->
 
