@@ -110,6 +110,7 @@ resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
     role {
       crn = "crn:v1:bluemix:public:iam::::serviceRole:${var.service_credentials_source_service_role}"
     }
+    parameters = var.service_credentials_source_service_hmac ? { "HMAC" : var.service_credentials_source_service_hmac } : null
   }
 
   ## This for_each block is NOT a loop to attach to multiple rotation blocks.
