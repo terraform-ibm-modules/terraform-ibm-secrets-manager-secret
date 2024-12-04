@@ -99,13 +99,16 @@ resource "ibm_sm_imported_certificate" "imported_cert" {
 }
 
 locals {
+  # there is a known issue with ternaries in merge, moved them out: https://github.com/hashicorp/terraform/issues/33310
+  local_service_credentials_source_service_hmac = var.service_credentials_source_service_hmac ? { "HMAC" : var.service_credentials_source_service_hmac } : null
+  local_service_credentials_serviceid_crn       = var.service_credentials_serviceid_crn != null ? { "serviceid_crn" : var.service_credentials_serviceid_crn } : null
+  local_service_credentials_service_endpoints   = var.service_credentials_service_endpoints != null ? { "service-endpoints" : var.service_credentials_service_endpoints } : null
   parameters = (
     var.service_credentials_parameters != null ? var.service_credentials_parameters :
-    merge(  # known issue wth merge: https://github.com/hashicorp/terraform/issues/33310
-      null, # using null as the first item seems to be a workaround
-      var.service_credentials_source_service_hmac ? { "HMAC" : var.service_credentials_source_service_hmac } : null,
-      var.service_credentials_serviceid_crn != null ? { "serviceid_crn" : var.service_credentials_serviceid_crn } : null,
-      var.service_credentials_service_endpoints != null ? { "service-endpoints" : var.service_credentials_service_endpoints } : null,
+    merge(
+      local.local_service_credentials_source_service_hmac,
+      local.local_service_credentials_serviceid_crn,
+      local.local_service_credentials_service_endpoints,
     )
   )
 }
