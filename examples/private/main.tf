@@ -5,6 +5,17 @@
 locals {
   payload       = sensitive("secret-payload-example")
   secret_labels = [var.prefix, var.region]
+
+  validate_sm_region_cnd = var.existing_sm_instance_crn != null && var.existing_sm_instance_region == null
+  validate_sm_region_msg = "existing_sm_instance_region must also be set when value given for existing_sm_instance_guid."
+  # tflint-ignore: terraform_unused_declarations
+  validate_sm_region_chk = regex(
+    "^${local.validate_sm_region_msg}$",
+    (!local.validate_sm_region_cnd
+      ? local.validate_sm_region_msg
+  : ""))
+
+  sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
 }
 
 ##############################################################################
@@ -28,7 +39,7 @@ module "secrets_manager" {
   version                  = "1.18.13"
   existing_sm_instance_crn = var.existing_sm_instance_crn
   resource_group_id        = module.resource_group.resource_group_id
-  region                   = var.region
+  region                   = local.sm_region
   secrets_manager_name     = "${var.prefix}-sm"
   sm_service_plan          = var.sm_service_plan
   allowed_network          = "private-only"
@@ -43,7 +54,7 @@ module "secrets_manager" {
 module "secrets_manager_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
   version                  = "1.2.2"
-  region                   = var.region
+  region                   = local.sm_region
   secrets_manager_guid     = module.secrets_manager.secrets_manager_guid
   secret_group_name        = "${var.prefix}-group"
   secret_group_description = "created by secrets-manager-secret-module complete example"
@@ -57,7 +68,7 @@ module "secrets_manager_group" {
 # create arbitrary secret
 module "secrets_manager_arbitrary_secret" {
   source                  = "../.."
-  region                  = var.region
+  region                  = local.sm_region
   secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
   secret_group_id         = module.secrets_manager_group.secret_group_id
   secret_name             = "${var.prefix}-arbitrary-secret"
@@ -71,7 +82,7 @@ module "secrets_manager_arbitrary_secret" {
 # retrieving information about the arbitrary secret
 data "ibm_sm_arbitrary_secret" "arbitrary_secret" {
   instance_id   = module.secrets_manager.secrets_manager_guid
-  region        = var.region
+  region        = local.sm_region
   secret_id     = module.secrets_manager_arbitrary_secret.secret_id
   endpoint_type = "private"
 }
@@ -83,7 +94,7 @@ data "ibm_sm_arbitrary_secret" "arbitrary_secret" {
 # create username / password secret
 module "secrets_manager_user_pass_secret" {
   source                  = "../.."
-  region                  = var.region
+  region                  = local.sm_region
   secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
   secret_group_id         = module.secrets_manager_group.secret_group_id
   secret_name             = "${var.prefix}-user-pass-secret"
@@ -98,7 +109,7 @@ module "secrets_manager_user_pass_secret" {
 # retrieving information about the userpass secret
 data "ibm_sm_username_password_secret" "user_pass_secret" {
   instance_id   = module.secrets_manager.secrets_manager_guid
-  region        = var.region
+  region        = local.sm_region
   secret_id     = module.secrets_manager_user_pass_secret.secret_id
   endpoint_type = "private"
 }
@@ -110,7 +121,7 @@ data "ibm_sm_username_password_secret" "user_pass_secret" {
 # create username / password secret
 module "secrets_manager_user_pass_no_rotate_secret" {
   source                  = "../.."
-  region                  = var.region
+  region                  = local.sm_region
   secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
   secret_group_id         = module.secrets_manager_group.secret_group_id
   secret_name             = "${var.prefix}-user-pass-no-rotate-secret"
@@ -126,7 +137,7 @@ module "secrets_manager_user_pass_no_rotate_secret" {
 # retrieving information about the userpass secret
 data "ibm_sm_username_password_secret" "user_pass_no_rotate_secret" {
   instance_id   = module.secrets_manager.secrets_manager_guid
-  region        = var.region
+  region        = local.sm_region
   secret_id     = module.secrets_manager_user_pass_no_rotate_secret.secret_id
   endpoint_type = "private"
 }
@@ -177,7 +188,7 @@ resource "tls_locally_signed_cert" "cert" {
 # create imported cert secret
 module "secret_manager_imported_cert" {
   source                     = "../.."
-  region                     = var.region
+  region                     = local.sm_region
   secrets_manager_guid       = module.secrets_manager.secrets_manager_guid
   secret_name                = "${var.prefix}-imported-cert"
   secret_group_id            = module.secrets_manager_group.secret_group_id
@@ -198,7 +209,7 @@ module "cloud_object_storage" {
   source                              = "terraform-ibm-modules/cos/ibm"
   version                             = "8.14.3"
   resource_group_id                   = module.resource_group.resource_group_id
-  region                              = var.region
+  region                              = local.sm_region
   cos_instance_name                   = "${var.prefix}-cos"
   cos_tags                            = var.resource_tags
   bucket_name                         = "${var.prefix}-bucket"
@@ -225,7 +236,7 @@ resource "ibm_iam_authorization_policy" "policy" {
 module "secret_manager_service_credential" {
   depends_on                              = [ibm_iam_authorization_policy.policy]
   source                                  = "../.."
-  region                                  = var.region
+  region                                  = local.sm_region
   secrets_manager_guid                    = module.secrets_manager.secrets_manager_guid
   secret_name                             = "${var.prefix}-service-credentials"
   secret_group_id                         = module.secrets_manager_group.secret_group_id
