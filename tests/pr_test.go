@@ -21,14 +21,16 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 const bestRegionYAMLPath = "../common-dev-assets/common-go-assets/cloudinfo-region-secmgr-prefs.yaml"
 
 type Config struct {
-	SmGuid       string `yaml:"secretsManagerGuid"`
-	SmRegion     string `yaml:"secretsManagerRegion"`
-	PrvOnlySmCRN string `yaml:"privateOnlySecMgrCRN"`
+	SmGuid          string `yaml:"secretsManagerGuid"`
+	SmRegion        string `yaml:"secretsManagerRegion"`
+	PrvOnlySmCRN    string `yaml:"privateOnlySecMgrCRN"`
+	PrvOnlySmRegion string `yaml:"privateOnlySecMgrRegion"`
 }
 
 var smGuid string
 var smRegion string
 var prvOnlySmCRN string
+var prvOnlySmRegion string
 
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
@@ -48,6 +50,7 @@ func TestMain(m *testing.M) {
 	smGuid = config.SmGuid
 	smRegion = config.SmRegion
 	prvOnlySmCRN = config.PrvOnlySmCRN
+	prvOnlySmRegion = config.PrvOnlySmRegion
 	os.Exit(m.Run())
 }
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
@@ -112,6 +115,7 @@ func TestPrivateInSchematics(t *testing.T) {
 		{Name: "region", Value: options.Region, DataType: "string"},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "existing_sm_instance_crn", Value: prvOnlySmCRN, DataType: "string"},
+		{Name: "existing_sm_instance_region", Value: prvOnlySmRegion, DataType: "string"},
 	}
 
 	err := options.RunSchematicTest()
