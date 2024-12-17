@@ -124,15 +124,9 @@ variable "service_credentials_source_service_hmac" {
   default     = false
 }
 
-variable "service_credentials_serviceid_crn" {
+variable "service_credentials_existing_serviceid_crn" {
   type        = string
-  description = "The optional parameter 'serviceid_crn' for creating service credentials. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters"
-  default     = null
-}
-
-variable "service_credentials_service_endpoints" {
-  type        = string
-  description = "The optional parameter 'service-endpoints' for creating service credentials. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters"
+  description = "The optional parameter 'serviceid_crn' for creating service credentials. If not passed in, a new Service ID will be created. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters"
   default     = null
 }
 

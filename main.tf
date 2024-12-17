@@ -34,7 +34,7 @@ locals {
   auto_rotation_enabled = var.secret_auto_rotation == true ? [1] : []
 
   # Prevent user from inputting a custom set of service credential parameters while also enabling specific parameter inputs
-  custom_parameters_validate_condition = var.service_credentials_parameters != null && (var.service_credentials_source_service_hmac == true || var.service_credentials_serviceid_crn != null || var.service_credentials_service_endpoints != null)
+  custom_parameters_validate_condition = var.service_credentials_parameters != null && (var.service_credentials_source_service_hmac == true || var.service_credentials_existing_serviceid_crn != null)
   custom_parameters_validate_msg       = "You are passing in a custom set of service credential parameters while also using variables that auto-set parameters."
   # tflint-ignore: terraform_unused_declarations
   custom_parameters_validate_check = regex("^${local.custom_parameters_validate_msg}$", (!local.custom_parameters_validate_condition ? local.custom_parameters_validate_msg : ""))
@@ -101,14 +101,12 @@ resource "ibm_sm_imported_certificate" "imported_cert" {
 locals {
   # there is a known issue with ternaries in merge, moved them out: https://github.com/hashicorp/terraform/issues/33310
   local_service_credentials_source_service_hmac = var.service_credentials_source_service_hmac ? { "HMAC" : var.service_credentials_source_service_hmac } : null
-  local_service_credentials_serviceid_crn       = var.service_credentials_serviceid_crn != null ? { "serviceid_crn" : var.service_credentials_serviceid_crn } : null
-  local_service_credentials_service_endpoints   = var.service_credentials_service_endpoints != null ? { "service-endpoints" : var.service_credentials_service_endpoints } : null
+  local_service_credentials_serviceid_crn       = var.service_credentials_existing_serviceid_crn != null ? { "serviceid_crn" : var.service_credentials_existing_serviceid_crn } : null
   parameters = (
     var.service_credentials_parameters != null ? var.service_credentials_parameters :
     merge(
       local.local_service_credentials_source_service_hmac,
       local.local_service_credentials_serviceid_crn,
-      local.local_service_credentials_service_endpoints,
     )
   )
 }
