@@ -235,4 +235,5 @@ module "secret_manager_service_credential" {
   secret_type                             = "service_credentials" #checkov:skip=CKV_SECRET_6
   service_credentials_source_service_crn  = module.cloud_object_storage.cos_instance_id
   service_credentials_source_service_role = "Writer"
+  service_credentials_parameters          = { "service-endpoints" : "public" }
 }
