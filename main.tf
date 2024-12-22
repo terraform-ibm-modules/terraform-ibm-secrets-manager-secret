@@ -32,6 +32,12 @@ locals {
   auto_rotation_validate_check = regex("^${local.auto_rotation_validate_msg}$", (!local.auto_rotation_validate_condition ? local.auto_rotation_validate_msg : ""))
 
   auto_rotation_enabled = var.secret_auto_rotation == true ? [1] : []
+
+  # Prevent user from inputting a custom set of service credential parameters while also enabling specific parameter inputs
+  custom_parameters_validate_condition = var.service_credentials_parameters != null && (var.service_credentials_source_service_hmac == true || var.service_credentials_existing_serviceid_crn != null)
+  custom_parameters_validate_msg       = "You are passing in a custom set of service credential parameters while also using variables that auto-set parameters."
+  # tflint-ignore: terraform_unused_declarations
+  custom_parameters_validate_check = regex("^${local.custom_parameters_validate_msg}$", (!local.custom_parameters_validate_condition ? local.custom_parameters_validate_msg : ""))
 }
 
 resource "ibm_sm_arbitrary_secret" "arbitrary_secret" {
@@ -92,6 +98,19 @@ resource "ibm_sm_imported_certificate" "imported_cert" {
   endpoint_type   = var.endpoint_type
 }
 
+locals {
+  # there is a known issue with ternaries in merge, moved them out: https://github.com/hashicorp/terraform/issues/33310
+  local_service_credentials_source_service_hmac = var.service_credentials_source_service_hmac ? { "HMAC" : var.service_credentials_source_service_hmac } : null
+  local_service_credentials_serviceid_crn       = var.service_credentials_existing_serviceid_crn != null ? { "serviceid_crn" : var.service_credentials_existing_serviceid_crn } : null
+  parameters = (
+    var.service_credentials_parameters != null ? var.service_credentials_parameters :
+    merge(
+      local.local_service_credentials_source_service_hmac,
+      local.local_service_credentials_serviceid_crn,
+    )
+  )
+}
+
 resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
   count           = var.secret_type == "service_credentials" ? 1 : 0 #checkov:skip=CKV_SECRET_6
   region          = var.region
@@ -110,7 +129,7 @@ resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
     role {
       crn = "crn:v1:bluemix:public:iam::::serviceRole:${var.service_credentials_source_service_role}"
     }
-    parameters = var.service_credentials_source_service_hmac ? { "HMAC" : var.service_credentials_source_service_hmac } : null
+    parameters = local.parameters
   }
 
   ## This for_each block is NOT a loop to attach to multiple rotation blocks.
