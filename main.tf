@@ -111,6 +111,16 @@ locals {
   )
 }
 
+locals {
+  role_service_name_mapping = {
+    ContentReader = "cloud-object-storage"
+    ObjectReader  = "cloud-object-storage"
+    ObjectWriter  = "cloud-object-storage"
+  }
+  role_service = can(local.role_service_name_mapping[var.service_credentials_source_service_role]) ? local.role_service_name_mapping[var.service_credentials_source_service_role] : "iam"
+  role_crn     = var.service_credentials_source_service_role != null ? "crn:v1:bluemix:public:${local.role_service}::::serviceRole:${var.service_credentials_source_service_role}" : ""
+}
+
 resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
   count           = var.secret_type == "service_credentials" ? 1 : 0 #checkov:skip=CKV_SECRET_6
   region          = var.region
@@ -127,7 +137,7 @@ resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
       crn = var.service_credentials_source_service_crn
     }
     role {
-      crn = "crn:v1:bluemix:public:iam::::serviceRole:${var.service_credentials_source_service_role}"
+      crn = local.role_crn
     }
     parameters = local.parameters
   }
