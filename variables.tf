@@ -112,6 +112,24 @@ variable "service_credentials_source_service_role" {
   default     = null
 }
 
+variable "service_credentials_parameters" {
+  type        = map(string)
+  description = "List of all custom parameters for service credential."
+  default     = null
+}
+
+variable "service_credentials_source_service_hmac" {
+  type        = bool
+  description = "The optional boolean parameter 'HMAC' for creating specific kind of credentials. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters"
+  default     = false
+}
+
+variable "service_credentials_existing_serviceid_crn" {
+  type        = string
+  description = "The optional parameter 'serviceid_crn' for creating service credentials. If not passed in, a new Service ID will be created. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters"
+  default     = null
+}
+
 variable "endpoint_type" {
   type        = string
   description = "The endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private`"
@@ -122,10 +140,5 @@ variable "endpoint_type" {
   }
 }
 
-variable "service_credentials_source_service_hmac" {
-  type        = bool
-  description = "The optional boolean parameter HMAC for creating specific kind of credentials. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters"
-  default     = false
-}
 
 ##############################################################################
