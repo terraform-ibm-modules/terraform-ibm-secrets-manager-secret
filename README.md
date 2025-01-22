@@ -196,7 +196,7 @@ No modules.
 | <a name="input_service_credentials_parameters"></a> [service\_credentials\_parameters](#input\_service\_credentials\_parameters) | List of all custom parameters for service credential. | `map(string)` | `null` | no |
 | <a name="input_service_credentials_source_service_crn"></a> [service\_credentials\_source\_service\_crn](#input\_service\_credentials\_source\_service\_crn) | The CRN of the source service instance to create the service credential. | `string` | `null` | no |
 | <a name="input_service_credentials_source_service_hmac"></a> [service\_credentials\_source\_service\_hmac](#input\_service\_credentials\_source\_service\_hmac) | The optional boolean parameter 'HMAC' for creating specific kind of credentials. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters | `bool` | `false` | no |
-| <a name="input_service_credentials_source_service_role"></a> [service\_credentials\_source\_service\_role](#input\_service\_credentials\_source\_service\_role) | The role to give the service credential in the source service. | `string` | `null` | no |
+| <a name="input_service_credentials_source_service_role_crn"></a> [service\_credentials\_source\_service\_role\_crn](#input\_service\_credentials\_source\_service\_role\_crn) | The CRN for the role to give the service credential in the source service. See https://cloud.ibm.com/iam/roles | `string` | `null` | no |
 | <a name="input_service_credentials_ttl"></a> [service\_credentials\_ttl](#input\_service\_credentials\_ttl) | The time-to-live (TTL) to assign to generated service credentials (in seconds). | `number` | `"7776000"` | no |
 
 ### Outputs

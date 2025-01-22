@@ -234,15 +234,15 @@ resource "ibm_iam_authorization_policy" "policy" {
 
 # create service credentials secret
 module "secret_manager_service_credential" {
-  depends_on                              = [ibm_iam_authorization_policy.policy]
-  source                                  = "../.."
-  region                                  = local.sm_region
-  secrets_manager_guid                    = module.secrets_manager.secrets_manager_guid
-  secret_name                             = "${var.prefix}-service-credentials"
-  secret_group_id                         = module.secrets_manager_group.secret_group_id
-  secret_description                      = "created by secrets-manager-secret-module complete example"
-  secret_type                             = "service_credentials" #checkov:skip=CKV_SECRET_6
-  service_credentials_source_service_crn  = module.cloud_object_storage.cos_instance_id
-  service_credentials_source_service_role = "Writer"
-  endpoint_type                           = "private"
+  depends_on                                  = [ibm_iam_authorization_policy.policy]
+  source                                      = "../.."
+  region                                      = local.sm_region
+  secrets_manager_guid                        = module.secrets_manager.secrets_manager_guid
+  secret_name                                 = "${var.prefix}-service-credentials"
+  secret_group_id                             = module.secrets_manager_group.secret_group_id
+  secret_description                          = "created by secrets-manager-secret-module complete example"
+  secret_type                                 = "service_credentials" #checkov:skip=CKV_SECRET_6
+  service_credentials_source_service_crn      = module.cloud_object_storage.cos_instance_id
+  service_credentials_source_service_role_crn = "crn:v1:bluemix:public:iam::::serviceRole:Writer"
+  endpoint_type                               = "private"
 }
