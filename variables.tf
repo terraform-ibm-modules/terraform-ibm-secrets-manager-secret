@@ -106,9 +106,9 @@ variable "service_credentials_source_service_crn" {
   default     = null
 }
 
-variable "service_credentials_source_service_role" {
+variable "service_credentials_source_service_role_crn" {
   type        = string
-  description = "The role to give the service credential in the source service."
+  description = "The CRN for the role to give the service credential in the source service. See https://cloud.ibm.com/iam/roles"
   default     = null
 }
 

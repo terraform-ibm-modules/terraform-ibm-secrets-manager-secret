@@ -20,8 +20,8 @@ locals {
   imported_cert_validate_check = regex("^${local.imported_cert_validate_msg}$", (!local.imported_cert_validate_condition ? local.imported_cert_validate_msg : ""))
 
   # validate service credentials has source service information
-  service_credentials_validate_condition = (var.secret_type == "service_credentials" && var.service_credentials_source_service_crn == null) || (var.secret_type == "service_credentials" && var.service_credentials_source_service_role == null) #checkov:skip=CKV_SECRET_6
-  service_credentials_validate_msg       = "When creating a service_credentials secret, values for `service_credentials_source_service_crn` and `service_credentials_source_service_role` are required."
+  service_credentials_validate_condition = (var.secret_type == "service_credentials" && var.service_credentials_source_service_crn == null) || (var.secret_type == "service_credentials" && var.service_credentials_source_service_role_crn == null) #checkov:skip=CKV_SECRET_6
+  service_credentials_validate_msg       = "When creating a service_credentials secret, values for `service_credentials_source_service_crn` and `service_credentials_source_service_role_crn` are required."
   # tflint-ignore: terraform_unused_declarations
   service_credentials_validate_check = regex("^${local.service_credentials_validate_msg}$", (!local.service_credentials_validate_condition ? local.service_credentials_validate_msg : ""))
 
@@ -131,7 +131,7 @@ resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
       crn = var.service_credentials_source_service_crn
     }
     role {
-      crn = "crn:v1:bluemix:public:iam::::serviceRole:${var.service_credentials_source_service_role}"
+      crn = var.service_credentials_source_service_role_crn
     }
     parameters = local.parameters
   }
