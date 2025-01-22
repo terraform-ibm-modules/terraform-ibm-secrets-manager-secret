@@ -140,5 +140,10 @@ variable "endpoint_type" {
   }
 }
 
+variable "custom_metadata" {
+  type        = map(string)
+  description = "Optional metadata to be added to the secret."
+  default     = null
+}
 
 ##############################################################################

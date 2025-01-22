@@ -12,6 +12,11 @@ output "secret_crn" {
   value       = local.secret_crn
 }
 
+output "secret_group" {
+  description = "Secret group of the created Secret"
+  value       = var.secret_group_id
+}
+
 output "secret_rotation" {
   description = "Status of auto-rotation for secret"
   value       = local.secret_auto_rotation
