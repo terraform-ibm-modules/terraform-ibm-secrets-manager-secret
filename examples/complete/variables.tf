@@ -45,9 +45,3 @@ variable "existing_sm_instance_region" {
   description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_guid"
   default     = null
 }
-
-variable "custom_metadata" {
-  type        = map(string)
-  description = "Optional metadata to be added to the secret."
-  default     = { "service-endpoints" : "public" }
-}

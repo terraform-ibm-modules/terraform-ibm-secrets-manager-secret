@@ -205,7 +205,7 @@ No modules.
 | Name | Description |
 |------|-------------|
 | <a name="output_secret_crn"></a> [secret\_crn](#output\_secret\_crn) | CRN of the created Secret |
-| <a name="output_secret_group_id"></a> [secret\_group\_id](#output\_secret\_group\_id) | Secret group of the created Secret |
+| <a name="output_secret_group_id"></a> [secret\_group\_id](#output\_secret\_group\_id) | Secret group ID of the created Secret |
 | <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
 | <a name="output_secret_next_rotation_date"></a> [secret\_next\_rotation\_date](#output\_secret\_next\_rotation\_date) | Next rotation date for secret (if applicable) |
 | <a name="output_secret_rotation"></a> [secret\_rotation](#output\_secret\_rotation) | Status of auto-rotation for secret |

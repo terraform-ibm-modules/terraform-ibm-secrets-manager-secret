@@ -13,7 +13,7 @@ output "secret_crn" {
 }
 
 output "secret_group_id" {
-  description = "Secret group of the created Secret"
+  description = "Secret group ID of the created Secret"
   value       = var.secret_group_id
 }
 
