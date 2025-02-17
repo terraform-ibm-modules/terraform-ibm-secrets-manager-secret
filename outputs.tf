@@ -12,7 +12,7 @@ output "secret_crn" {
   value       = local.secret_crn
 }
 
-output "secret_group" {
+output "secret_group_id" {
   description = "Secret group of the created Secret"
   value       = var.secret_group_id
 }
