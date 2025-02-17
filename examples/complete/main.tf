@@ -38,7 +38,7 @@ module "resource_group" {
 module "secrets_manager" {
   count                = var.existing_sm_instance_guid == null ? 1 : 0
   source               = "terraform-ibm-modules/secrets-manager/ibm"
-  version              = "1.20.0"
+  version              = "1.23.6"
   resource_group_id    = module.resource_group.resource_group_id
   region               = local.sm_region
   secrets_manager_name = "${var.prefix}-secrets-manager"
@@ -199,12 +199,12 @@ module "secret_manager_imported_cert" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                             = "terraform-ibm-modules/cos/ibm"
-  version                            = "8.16.5"
+  version                            = "8.19.3"
   resource_group_id                  = module.resource_group.resource_group_id
   region                             = var.region
   cos_instance_name                  = "${var.prefix}-cos"
   cos_tags                           = var.resource_tags
-  bucket_name                        = "${var.prefix}-bucket"
+  create_cos_bucket                  = false
   activity_tracker_read_data_events  = false
   activity_tracker_write_data_events = false
   request_metrics_enabled            = false
