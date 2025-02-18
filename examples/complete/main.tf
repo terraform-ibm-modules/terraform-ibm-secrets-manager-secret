@@ -75,7 +75,7 @@ module "secrets_manager_arbitrary_secret" {
   secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
   secret_payload_password = local.payload
   secret_labels           = local.secret_labels
-  custom_metadata         = { "service-endpoints" : "public" } # can add any custom metadata here
+  custom_metadata         = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
 }
 
 # retrieving information about the arbitrary secret
@@ -101,7 +101,7 @@ module "secrets_manager_user_pass_secret" {
   secret_payload_password = local.payload
   secret_username         = "terraform-user" #checkov:skip=CKV_SECRET_6
   secret_labels           = local.secret_labels
-  custom_metadata         = { "service-endpoints" : "public" } # can add any custom metadata here
+  custom_metadata         = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
 }
 
 # retrieving information about the userpass secret
@@ -128,7 +128,7 @@ module "secrets_manager_user_pass_no_rotate_secret" {
   secret_username         = "terraform-user" #checkov:skip=CKV_SECRET_6
   secret_labels           = local.secret_labels
   secret_auto_rotation    = false
-  custom_metadata         = { "service-endpoints" : "public" } # can add any custom metadata here
+  custom_metadata         = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
 }
 
 # retrieving information about the userpass secret
@@ -193,7 +193,7 @@ module "secret_manager_imported_cert" {
   imported_cert_certificate  = resource.tls_locally_signed_cert.cert.cert_pem
   imported_cert_private_key  = resource.tls_private_key.key.private_key_pem
   imported_cert_intermediate = resource.tls_self_signed_cert.ca_cert.cert_pem
-  custom_metadata            = { "service-endpoints" : "public" } # can add any custom metadata here
+  custom_metadata            = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
 }
 
 ##############################################################################
@@ -240,5 +240,5 @@ module "secret_manager_service_credential" {
   service_credentials_source_service_crn      = module.cloud_object_storage.cos_instance_id
   service_credentials_source_service_role_crn = "crn:v1:bluemix:public:iam::::serviceRole:Writer"
   service_credentials_parameters              = { "service-endpoints" : "public" }
-  custom_metadata                             = { "service-endpoints" : "public" } # can add any custom metadata here
+  custom_metadata                             = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
 }
