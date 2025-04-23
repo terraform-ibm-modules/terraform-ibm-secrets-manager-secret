@@ -116,6 +116,7 @@ func TestPrivateInSchematics(t *testing.T) {
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "existing_sm_instance_crn", Value: prvOnlySmCRN, DataType: "string"},
 		{Name: "existing_sm_instance_region", Value: prvOnlySmRegion, DataType: "string"},
+		{Name: "skip_iam_authorization_policy", Value: true, DataType: "bool"},
 	}
 
 	err := options.RunSchematicTest()
