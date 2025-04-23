@@ -4,40 +4,8 @@
 # Creates Secret within existing Secret Manager instance and Secret Manager Group
 ##############################################################################
 
-# Validation
-# Approach based on https://stackoverflow.com/a/66682419
 locals {
-  # validate username_password or arbitrary secret has a password payload
-  userpass_validate_condition = (var.secret_type == "username_password" || var.secret_type == "arbitrary") && var.secret_payload_password == "" #checkov:skip=CKV_SECRET_6
-  userpass_validate_msg       = "When creating a username_password or arbitrary secret, a value for `secret_payload_password` is required."
-  # tflint-ignore: terraform_unused_declarations
-  userpass_validate_check = regex("^${local.userpass_validate_msg}$", (!local.userpass_validate_condition ? local.userpass_validate_msg : ""))
-
-  # validate imported certificate has a TLS certificate
-  imported_cert_validate_condition = var.secret_type == "imported_cert" && var.imported_cert_certificate == null #checkov:skip=CKV_SECRET_6
-  imported_cert_validate_msg       = "When creating an imported_cert secret, value for `imported_cert_certificate` cannot be null."
-  # tflint-ignore: terraform_unused_declarations
-  imported_cert_validate_check = regex("^${local.imported_cert_validate_msg}$", (!local.imported_cert_validate_condition ? local.imported_cert_validate_msg : ""))
-
-  # validate service credentials has source service information
-  service_credentials_validate_condition = (var.secret_type == "service_credentials" && var.service_credentials_source_service_crn == null) || (var.secret_type == "service_credentials" && var.service_credentials_source_service_role_crn == null) #checkov:skip=CKV_SECRET_6
-  service_credentials_validate_msg       = "When creating a service_credentials secret, values for `service_credentials_source_service_crn` and `service_credentials_source_service_role_crn` are required."
-  # tflint-ignore: terraform_unused_declarations
-  service_credentials_validate_check = regex("^${local.service_credentials_validate_msg}$", (!local.service_credentials_validate_condition ? local.service_credentials_validate_msg : ""))
-
-  # validate auto rotation format
-  auto_rotation_validate_condition = var.secret_auto_rotation == true && var.secret_auto_rotation_unit != "month" && var.secret_auto_rotation == true && var.secret_auto_rotation_unit != "day" || var.secret_auto_rotation == true && var.secret_auto_rotation_interval == 0
-  auto_rotation_validate_msg       = "Value for `secret_auto_rotation_unit' must be either `day` or `month` and value for `secret_auto_rotation_interval` must be higher than 0"
-  # tflint-ignore: terraform_unused_declarations
-  auto_rotation_validate_check = regex("^${local.auto_rotation_validate_msg}$", (!local.auto_rotation_validate_condition ? local.auto_rotation_validate_msg : ""))
-
   auto_rotation_enabled = var.secret_auto_rotation == true ? [1] : []
-
-  # Prevent user from inputting a custom set of service credential parameters while also enabling specific parameter inputs
-  custom_parameters_validate_condition = var.service_credentials_parameters != null && (var.service_credentials_source_service_hmac == true || var.service_credentials_existing_serviceid_crn != null)
-  custom_parameters_validate_msg       = "You are passing in a custom set of service credential parameters while also using variables that auto-set parameters."
-  # tflint-ignore: terraform_unused_declarations
-  custom_parameters_validate_check = regex("^${local.custom_parameters_validate_msg}$", (!local.custom_parameters_validate_condition ? local.custom_parameters_validate_msg : ""))
 }
 
 resource "ibm_sm_arbitrary_secret" "arbitrary_secret" {

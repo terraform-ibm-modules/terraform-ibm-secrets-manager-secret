@@ -38,10 +38,15 @@ variable "existing_sm_instance_crn" {
   type        = string
   description = "An existing Secrets Manager instance CRN. If not provided an new instance will be provisioned."
   default     = null
+
+  validation {
+    condition = var.existing_sm_instance_crn != null ? var.existing_sm_instance_region != null : true
+    error_message = "`existing_sm_instance_region` must also be set when value given for `existing_sm_instance_crn`."
+  }
 }
 
 variable "existing_sm_instance_region" {
   type        = string
-  description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_guid"
+  description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_crn"
   default     = null
 }
