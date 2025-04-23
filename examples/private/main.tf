@@ -5,7 +5,7 @@
 locals {
   payload       = sensitive("secret-payload-example")
   secret_labels = [var.prefix, var.region]
-  sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
+  sm_region     = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
 }
 
 ##############################################################################

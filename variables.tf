@@ -23,22 +23,22 @@ variable "secret_type" {
   description = "Type of secret to create, must be one of: arbitrary, username_password, imported_cert, service_credentials"
 
   validation {
-    condition = contains(["arbitrary","username_password","imported_cert","service_credentials"], var.secret_type) #checkov:skip=CKV_SECRET_6
+    condition     = contains(["arbitrary", "username_password", "imported_cert", "service_credentials"], var.secret_type) #checkov:skip=CKV_SECRET_6
     error_message = "Only supported secrets types are arbitrary, username_password, imported_cert, or service_credentials"
   }
 
   validation {
-    condition = (var.secret_type == "username_password" || var.secret_type == "arbitrary") ? var.secret_payload_password != "" : true
+    condition     = (var.secret_type == "username_password" || var.secret_type == "arbitrary") ? var.secret_payload_password != "" : true
     error_message = "When creating a username_password or arbitrary secret, a value for `secret_payload_password` is required."
   }
 
   validation {
-    condition = var.secret_type == "imported_cert" ? var.imported_cert_certificate != null : true
+    condition     = var.secret_type == "imported_cert" ? var.imported_cert_certificate != null : true
     error_message = "When creating an imported_cert secret, value for `imported_cert_certificate` cannot be null."
   }
 
   validation {
-    condition = var.secret_type == "service_credentials" ? var.service_credentials_source_service_crn != null && var.service_credentials_source_service_role_crn != null : true
+    condition     = var.secret_type == "service_credentials" ? var.service_credentials_source_service_crn != null && var.service_credentials_source_service_role_crn != null : true
     error_message = "When creating a service_credentials secret, values for `service_credentials_source_service_crn` and `service_credentials_source_service_role_crn` are required."
   }
 }
@@ -108,7 +108,7 @@ variable "secret_auto_rotation_unit" {
   default     = "day" #tfsec:ignore:general-secrets-no-plaintext-exposure
 
   validation {
-    condition = contains(["day", "month"], var.secret_auto_rotation_unit)
+    condition     = contains(["day", "month"], var.secret_auto_rotation_unit)
     error_message = "Value for `secret_auto_rotation_unit' must be either `day` or `month`."
   }
 }
@@ -119,7 +119,7 @@ variable "secret_auto_rotation_interval" {
   default     = 89
 
   validation {
-    condition = var.secret_auto_rotation_interval > 0
+    condition     = var.secret_auto_rotation_interval > 0
     error_message = "Value for `secret_auto_rotation_interval` must be higher than 0."
   }
 }
@@ -153,7 +153,7 @@ variable "service_credentials_parameters" {
   default     = null
 
   validation {
-    condition = var.service_credentials_parameters != null ? !(var.service_credentials_source_service_hmac == true || var.service_credentials_existing_serviceid_crn != null) : true
+    condition     = var.service_credentials_parameters != null ? !(var.service_credentials_source_service_hmac == true || var.service_credentials_existing_serviceid_crn != null) : true
     error_message = "You are passing in a custom set of service credential parameters while also using variables that auto-set parameters."
   }
 }

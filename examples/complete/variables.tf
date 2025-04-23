@@ -40,7 +40,7 @@ variable "existing_sm_instance_guid" {
   default     = null
 
   validation {
-    condition = var.existing_sm_instance_guid != null ? var.existing_sm_instance_region != null : true
+    condition     = var.existing_sm_instance_guid != null ? var.existing_sm_instance_region != null : true
     error_message = "`existing_sm_instance_region` must also be set when value given for `existing_sm_instance_guid`."
   }
 }
