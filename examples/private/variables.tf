@@ -50,3 +50,9 @@ variable "existing_sm_instance_region" {
   description = "The region of the existing Secrets Manager instance. Only required if value is passed into var.existing_sm_instance_crn"
   default     = null
 }
+
+variable "skip_iam_authorization_policy" {
+  type        = bool
+  description = "Whether to skip the creation of the IAM authorization policies required to enable the IAM credentials engine. If set to false, policies will be created that grants the Secrets Manager instance 'Operator' access to the IAM identity service, and 'Groups Service Member Manage' access to the IAM groups service."
+  default     = false
+}
