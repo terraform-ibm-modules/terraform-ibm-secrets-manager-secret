@@ -3,15 +3,7 @@
 ##############################################################################
 
 locals {
-  payload                = sensitive("secret-payload-example")
-  validate_sm_region_cnd = var.existing_sm_instance_guid != null && var.existing_sm_instance_region == null
-  validate_sm_region_msg = "existing_sm_instance_region must also be set when value given for existing_sm_instance_guid."
-  # tflint-ignore: terraform_unused_declarations
-  validate_sm_region_chk = regex(
-    "^${local.validate_sm_region_msg}$",
-    (!local.validate_sm_region_cnd
-      ? local.validate_sm_region_msg
-  : ""))
+  payload = sensitive("secret-payload-example")
 
   sm_guid   = var.existing_sm_instance_guid == null ? module.secrets_manager[0].secrets_manager_guid : var.existing_sm_instance_guid
   sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
