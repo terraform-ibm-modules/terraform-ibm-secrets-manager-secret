@@ -2,11 +2,11 @@ module github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret
 
 go 1.23.0
 
-toolchain go1.24.4
+toolchain go1.24.5
 
 require (
 	github.com/stretchr/testify v1.10.0
-	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.55.2
+	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.55.7
 	gopkg.in/yaml.v3 v3.0.1
 )
 
