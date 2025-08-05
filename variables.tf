@@ -23,13 +23,18 @@ variable "secret_type" {
   description = "Type of secret to create, must be one of: arbitrary, username_password, imported_cert, service_credentials"
 
   validation {
-    condition     = contains(["arbitrary", "username_password", "imported_cert", "service_credentials"], var.secret_type) #checkov:skip=CKV_SECRET_6
-    error_message = "Only supported secrets types are arbitrary, username_password, imported_cert, or service_credentials"
+    condition     = contains(["arbitrary", "username_password", "imported_cert", "key_value", "service_credentials"], var.secret_type) #checkov:skip=CKV_SECRET_6
+    error_message = "Only supported secrets types are arbitrary, username_password, key_value , imported_cert, or service_credentials"
   }
 
   validation {
     condition     = (var.secret_type == "username_password" || var.secret_type == "arbitrary") ? var.secret_payload_password != "" : true
     error_message = "When creating a username_password or arbitrary secret, a value for `secret_payload_password` is required."
+  }
+
+  validation {
+    condition     = var.secret_type == "key_value" ? var.secret_kv_data != "" : true
+    error_message = "When creating a key_value secret, a value for `secret_kv_data` is required."
   }
 
   validation {
@@ -94,6 +99,13 @@ variable "secret_payload_password" {
   description = "The payload (for arbitrary secrets) or password (for username and password credentials) of the secret."
   sensitive   = true
   default     = "" #tfsec:ignore:general-secrets-no-plaintext-exposure
+}
+
+variable "secret_kv_data" {
+  type        = map(any)
+  description = "key-value secret data"
+  sensitive   = true
+  default     = {}
 }
 
 variable "secret_auto_rotation" {

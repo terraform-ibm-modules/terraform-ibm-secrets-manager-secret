@@ -169,6 +169,7 @@ No modules.
 |------|------|
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
+| [ibm_sm_kv_secret.kv_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_kv_secret) | resource |
 | [ibm_sm_service_credentials_secret.service_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
 | [ibm_sm_username_password_secret.username_password_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_username_password_secret) | resource |
 
@@ -187,6 +188,7 @@ No modules.
 | <a name="input_secret_auto_rotation_unit"></a> [secret\_auto\_rotation\_unit](#input\_secret\_auto\_rotation\_unit) | Specifies the unit of time for rotation of a username\_password secret. Acceptable values are `day` or `month`. | `string` | `"day"` | no |
 | <a name="input_secret_description"></a> [secret\_description](#input\_secret\_description) | Description of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_group_id"></a> [secret\_group\_id](#input\_secret\_group\_id) | The ID of the secret group for the secret. If `null`, the `default` secret group is used. | `string` | `"default"` | no |
+| <a name="input_secret_kv_data"></a> [secret\_kv\_data](#input\_secret\_kv\_data) | key-value secret data | `map(any)` | `{}` | no |
 | <a name="input_secret_labels"></a> [secret\_labels](#input\_secret\_labels) | Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (\|). | `list(string)` | `[]` | no |
 | <a name="input_secret_name"></a> [secret\_name](#input\_secret\_name) | Name of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_payload_password"></a> [secret\_payload\_password](#input\_secret\_payload\_password) | The payload (for arbitrary secrets) or password (for username and password credentials) of the secret. | `string` | `""` | no |

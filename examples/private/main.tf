@@ -3,7 +3,9 @@
 ##############################################################################
 
 locals {
-  payload       = sensitive("secret-payload-example")
+  payload = sensitive("secret-payload-example")
+  kv_data = sensitive({ "key1" : "value1" })
+
   secret_labels = [var.prefix, var.region]
   sm_region     = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
 }
@@ -48,7 +50,7 @@ module "secrets_manager_group" {
   region                   = local.sm_region
   secrets_manager_guid     = module.secrets_manager.secrets_manager_guid
   secret_group_name        = "${var.prefix}-group"
-  secret_group_description = "created by secrets-manager-secret-module complete example"
+  secret_group_description = "created by secrets-manager-secret-module private example"
   endpoint_type            = "private"
 }
 
@@ -63,7 +65,7 @@ module "secrets_manager_arbitrary_secret" {
   secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
   secret_group_id         = module.secrets_manager_group.secret_group_id
   secret_name             = "${var.prefix}-arbitrary-secret"
-  secret_description      = "created by secrets-manager-secret-module complete example"
+  secret_description      = "created by secrets-manager-secret-module private example"
   secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
   secret_payload_password = local.payload
   secret_labels           = local.secret_labels
@@ -89,7 +91,7 @@ module "secrets_manager_user_pass_secret" {
   secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
   secret_group_id         = module.secrets_manager_group.secret_group_id
   secret_name             = "${var.prefix}-user-pass-secret"
-  secret_description      = "created by secrets-manager-secret-module complete example"
+  secret_description      = "created by secrets-manager-secret-module private example"
   secret_type             = "username_password" #checkov:skip=CKV_SECRET_6
   secret_payload_password = local.payload
   secret_username         = "terraform-user" #checkov:skip=CKV_SECRET_6
@@ -116,7 +118,7 @@ module "secrets_manager_user_pass_no_rotate_secret" {
   secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
   secret_group_id         = module.secrets_manager_group.secret_group_id
   secret_name             = "${var.prefix}-user-pass-no-rotate-secret"
-  secret_description      = "created by secrets-manager-secret-module complete example"
+  secret_description      = "created by secrets-manager-secret-module private example"
   secret_type             = "username_password" #checkov:skip=CKV_SECRET_6
   secret_payload_password = local.payload
   secret_username         = "terraform-user" #checkov:skip=CKV_SECRET_6
@@ -183,7 +185,7 @@ module "secret_manager_imported_cert" {
   secrets_manager_guid       = module.secrets_manager.secrets_manager_guid
   secret_name                = "${var.prefix}-imported-cert"
   secret_group_id            = module.secrets_manager_group.secret_group_id
-  secret_description         = "created by secrets-manager-secret-module complete example"
+  secret_description         = "created by secrets-manager-secret-module private example"
   secret_type                = "imported_cert" #checkov:skip=CKV_SECRET_6
   imported_cert_certificate  = resource.tls_locally_signed_cert.cert.cert_pem
   imported_cert_private_key  = resource.tls_private_key.key.private_key_pem
@@ -231,9 +233,34 @@ module "secret_manager_service_credential" {
   secrets_manager_guid                        = module.secrets_manager.secrets_manager_guid
   secret_name                                 = "${var.prefix}-service-credentials"
   secret_group_id                             = module.secrets_manager_group.secret_group_id
-  secret_description                          = "created by secrets-manager-secret-module complete example"
+  secret_description                          = "created by secrets-manager-secret-module private example"
   secret_type                                 = "service_credentials" #checkov:skip=CKV_SECRET_6
   service_credentials_source_service_crn      = module.cloud_object_storage.cos_instance_id
   service_credentials_source_service_role_crn = "crn:v1:bluemix:public:iam::::serviceRole:Writer"
   endpoint_type                               = "private"
+}
+##############################################################################
+# Example working with key-value secret
+##############################################################################
+
+# create key-value secret
+module "secrets_manager_key_value_secret" {
+  source               = "../.."
+  region               = local.sm_region
+  secrets_manager_guid = module.secrets_manager.secrets_manager_guid
+  secret_group_id      = module.secrets_manager_group.secret_group_id
+  secret_name          = "${var.prefix}-key-value-secret"
+  secret_description   = "created by secrets-manager-secret-module private example"
+  secret_type          = "key_value"
+  secret_kv_data       = local.kv_data
+  secret_labels        = local.secret_labels
+  endpoint_type        = "private"
+}
+
+# retrieving information about the key-value secret
+data "ibm_sm_kv_secret" "kv_secret" {
+  instance_id   = module.secrets_manager.secrets_manager_guid
+  region        = local.sm_region
+  secret_id     = module.secrets_manager_key_value_secret.secret_id
+  endpoint_type = "private"
 }
