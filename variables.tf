@@ -33,7 +33,7 @@ variable "secret_type" {
   }
 
   validation {
-    condition     = var.secret_type == "key_value" ? var.secret_kv_data != "" : true
+    condition     = var.secret_type == "key_value" ? var.secret_kv_data != null : true
     error_message = "When creating a key_value secret, a value for `secret_kv_data` is required."
   }
 
@@ -105,7 +105,7 @@ variable "secret_kv_data" {
   type        = map(any)
   description = "key-value secret data"
   sensitive   = true
-  default     = {}
+  default     = null
 }
 
 variable "secret_auto_rotation" {
