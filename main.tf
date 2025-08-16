@@ -116,19 +116,34 @@ resource "ibm_sm_service_credentials_secret" "service_credentials_secret" {
   }
 }
 
+resource "ibm_sm_kv_secret" "kv_secret" {
+  count           = var.secret_type == "key_value" ? 1 : 0
+  region          = var.region
+  instance_id     = var.secrets_manager_guid
+  secret_group_id = var.secret_group_id
+  name            = var.secret_name
+  description     = var.secret_description
+  labels          = var.secret_labels
+  data            = var.secret_kv_data
+  endpoint_type   = var.endpoint_type
+  custom_metadata = var.custom_metadata
+}
+
 # Parse secret ID and generate data header for secrets
 locals {
   secret_id = (
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].secret_id :
     var.secret_type == "imported_cert" ? ibm_sm_imported_certificate.imported_cert[0].secret_id :
     var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].secret_id :
-    var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].secret_id : null
+    var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].secret_id :
+    var.secret_type == "key_value" ? ibm_sm_kv_secret.kv_secret[0].secret_id : null
   )
   secret_crn = (
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].crn :
     var.secret_type == "imported_cert" ? ibm_sm_imported_certificate.imported_cert[0].crn :
     var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].crn :
-    var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].crn : null
+    var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].crn :
+    var.secret_type == "key_value" ? ibm_sm_kv_secret.kv_secret[0].crn : null
   )
   #tfsec:ignore:general-secrets-no-plaintext-exposure
   secret_auto_rotation_frequency = var.secret_auto_rotation == true ? "${var.secret_auto_rotation_interval} ${var.secret_auto_rotation_unit}(s)" : null #tfsec:ignore:general-secrets-no-plaintext-exposure

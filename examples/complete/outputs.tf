@@ -83,3 +83,25 @@ output "service_credential_secret_crn" {
   description = "CRN of the created service_credential secret"
   value       = module.secret_manager_service_credential.secret_crn
 }
+
+output "kv_secret_id" {
+  description = "ID of the created kv_secret_id secret"
+  value       = module.secrets_manager_key_value_secret.secret_id
+}
+
+output "kv_secret_crn" {
+  description = "CRN of the created kv_secret_id secret"
+  value       = module.secrets_manager_key_value_secret.secret_crn
+}
+
+output "kv_secret_nonsensitive_payload" {
+  value       = nonsensitive(data.ibm_sm_kv_secret.kv_secret.data)
+  description = "accessing key value secret"
+  sensitive   = false
+}
+
+output "kv_secret_payload" {
+  value       = data.ibm_sm_kv_secret.kv_secret.data
+  sensitive   = true
+  description = "accessing key value secret"
+}
