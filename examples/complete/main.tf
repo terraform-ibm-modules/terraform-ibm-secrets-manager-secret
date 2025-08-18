@@ -4,7 +4,7 @@
 
 locals {
   payload = sensitive("secret-payload-example")
-  kv_data = { "key1" : "value1" }
+  kv_data = { "key1" : "value", "key2" : true, "key3" : 4 }
 
   sm_guid   = var.existing_sm_instance_guid == null ? module.secrets_manager[0].secrets_manager_guid : var.existing_sm_instance_guid
   sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region

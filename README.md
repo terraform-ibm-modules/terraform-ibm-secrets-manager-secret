@@ -14,6 +14,7 @@ The module supports the following secret types:
 - [User credentials](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-user-credentials&interface=ui)
 - [Imported Certificate](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-certificates&interface=api#import-certificates)
 - [Service Credentials](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-service-credentials&interface=api)
+- [Key Value](https://cloud.ibm.com/docs/secrets-manager?topic=secrets-manager-key-value&interface=ui)
 
 The following attributes and parameters are supported for all secret types:
 
@@ -48,6 +49,11 @@ The following attributes and parameters are supported when creating service cred
 - `secret_auto_rotation`: Configures automatic rotation. Default is `true`.
 - `secret_auto_rotation_unit`: Specifies the unit type for the secret rotation. Accepted values are `day` or `month`. Default is `day`.
 - `secret_auto_rotation_interval`: Specifies the rotation interval for the rotation unit. Default is `89`.
+
+The following attributes and parameters are supported when creating Key Value secrets:
+
+- `secret_kv_data`: key-value secret data.
+
 
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
@@ -140,6 +146,23 @@ module "secret_manager_service_credential" {
 }
 ```
 
+```hcl
+##############################################################################
+# Create Key Value Secret
+##############################################################################
+
+module "secrets_manager_key_value_secret" {
+  source                  = "terraform-ibm-modules/secrets-manager-secret/ibm"
+  version                 = "latest" # Replace "latest" with a release version to lock into a specific release
+  region                  = "us-south"
+  secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
+  secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
+  secret_name             = "example-kv-secret"
+  secret_description      = "Extended description for the key-value secret."
+  secret_type             = "key_value"
+  secret_kv_data          = {"key1":"value"} #pragma: allowlist secret
+}
+```
 ### Required IAM access policies
 You need the following permissions to run this module.
 
@@ -188,7 +211,7 @@ No modules.
 | <a name="input_secret_auto_rotation_unit"></a> [secret\_auto\_rotation\_unit](#input\_secret\_auto\_rotation\_unit) | Specifies the unit of time for rotation of a username\_password secret. Acceptable values are `day` or `month`. | `string` | `"day"` | no |
 | <a name="input_secret_description"></a> [secret\_description](#input\_secret\_description) | Description of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_group_id"></a> [secret\_group\_id](#input\_secret\_group\_id) | The ID of the secret group for the secret. If `null`, the `default` secret group is used. | `string` | `"default"` | no |
-| <a name="input_secret_kv_data"></a> [secret\_kv\_data](#input\_secret\_kv\_data) | key-value secret data | `map(any)` | `null` | no |
+| <a name="input_secret_kv_data"></a> [secret\_kv\_data](#input\_secret\_kv\_data) | key-value secret data | `map(string)` | `null` | no |
 | <a name="input_secret_labels"></a> [secret\_labels](#input\_secret\_labels) | Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (\|). | `list(string)` | `[]` | no |
 | <a name="input_secret_name"></a> [secret\_name](#input\_secret\_name) | Name of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_payload_password"></a> [secret\_payload\_password](#input\_secret\_payload\_password) | The payload (for arbitrary secrets) or password (for username and password credentials) of the secret. | `string` | `""` | no |

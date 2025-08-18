@@ -102,7 +102,7 @@ variable "secret_payload_password" {
 }
 
 variable "secret_kv_data" {
-  type        = map(any)
+  type        = map(string)
   description = "key-value secret data"
   sensitive   = true
   default     = null

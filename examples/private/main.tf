@@ -4,7 +4,7 @@
 
 locals {
   payload = sensitive("secret-payload-example")
-  kv_data = { "key1" : "value1" }
+  kv_data = { "key1" : "value", "key2" : true, "key3" : 4 }
 
   secret_labels = [var.prefix, var.region]
   sm_region     = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
