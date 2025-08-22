@@ -4,6 +4,7 @@
 
 locals {
   payload = sensitive("secret-payload-example")
+  kv_data = { "key1" : "value", "key2" : true, "key3" : 4 }
 
   sm_guid   = var.existing_sm_instance_guid == null ? module.secrets_manager[0].secrets_manager_guid : var.existing_sm_instance_guid
   sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
@@ -233,4 +234,29 @@ module "secret_manager_service_credential" {
   service_credentials_source_service_role_crn = "crn:v1:bluemix:public:iam::::serviceRole:Writer"
   service_credentials_parameters              = { "service-endpoints" : "public" }
   custom_metadata                             = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+}
+
+##############################################################################
+# Example working with key-value secret
+##############################################################################
+
+# create key-value secret
+module "secrets_manager_key_value_secret" {
+  source               = "../.."
+  region               = local.sm_region
+  secrets_manager_guid = local.sm_guid
+  secret_group_id      = module.secrets_manager_group.secret_group_id
+  secret_name          = "${var.prefix}-key-value-secret"
+  secret_description   = "created by secrets-manager-secret-module complete example"
+  secret_type          = "key_value"
+  secret_kv_data       = local.kv_data
+  secret_labels        = local.secret_labels
+  custom_metadata      = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+}
+
+# retrieving information about the key-value secret
+data "ibm_sm_kv_secret" "kv_secret" {
+  instance_id = local.sm_guid
+  region      = local.sm_region
+  secret_id   = module.secrets_manager_key_value_secret.secret_id
 }
