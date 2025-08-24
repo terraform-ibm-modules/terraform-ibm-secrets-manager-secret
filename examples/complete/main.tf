@@ -242,19 +242,17 @@ module "secret_manager_service_credential" {
 }
 
 module "custom_credential_engine" {
-  # depends_on                                   = [module.code_engine]
   source                        = "git@github.com:terraform-ibm-modules/terraform-ibm-secrets-manager-custom-credentials-engine.git?ref=13662-custom-engine"
   secrets_manager_guid          = local.sm_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
   endpoint_type                 = "public"
   code_engine_project_id        = "870f98d4-6b35-4e1a-a85f-ba0652febc82"
-  code_engine_job_name          = "api-job-test" #module.code_engine.job["${var.prefix}-job"].name
-  # code_engine_region                           = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
-  code_engine_region         = "us-east"
-  task_timeout               = "10m"
-  service_id_name            = "${var.prefix}-test-service-id"
-  iam_credential_secret_name = "${var.prefix}-test-iam-secret"
+  code_engine_job_name          = "api-job-test"
+  code_engine_region            = "us-east"
+  task_timeout                  = "10m"
+  service_id_name               = "${var.prefix}-test-service-id"
+  iam_credential_secret_name    = "${var.prefix}-test-iam-secret"
 }
 
 # create custom credentials secret
