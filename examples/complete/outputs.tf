@@ -83,3 +83,13 @@ output "service_credential_secret_crn" {
   description = "CRN of the created service_credential secret"
   value       = module.secret_manager_service_credential.secret_crn
 }
+
+output "custom_credential_secret_id" {
+  description = "ID of the created custom_credential secret"
+  value       = module.secret_manager_custom_credential.secret_id
+}
+
+output "custom_credential_secret_crn" {
+  description = "CRN of the created custom_credential secret"
+  value       = module.secret_manager_custom_credential.secret_crn
+}

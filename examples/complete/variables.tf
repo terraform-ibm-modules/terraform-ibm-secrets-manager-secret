@@ -7,7 +7,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix to use for naming of all resource created by this example"
-  default     = "test-sm-secret-module"
+  default     = "sm-secret-module-complete"
 }
 
 variable "sm_service_plan" {

@@ -20,11 +20,11 @@ variable "secret_group_id" {
 
 variable "secret_type" {
   type        = string
-  description = "Type of secret to create, must be one of: arbitrary, username_password, imported_cert, service_credentials"
+  description = "Type of secret to create, must be one of: arbitrary, username_password, imported_cert, service_credentials, custom_credentials"
 
   validation {
-    condition     = contains(["arbitrary", "username_password", "imported_cert", "service_credentials"], var.secret_type) #checkov:skip=CKV_SECRET_6
-    error_message = "Only supported secrets types are arbitrary, username_password, imported_cert, or service_credentials"
+    condition     = contains(["arbitrary", "username_password", "imported_cert", "service_credentials", "custom_credentials"], var.secret_type) #checkov:skip=CKV_SECRET_6
+    error_message = "Only supported secrets types are arbitrary, username_password, imported_cert, service_credentials or custom_credentials"
   }
 
   validation {
@@ -40,6 +40,11 @@ variable "secret_type" {
   validation {
     condition     = var.secret_type == "service_credentials" ? var.service_credentials_source_service_crn != null && var.service_credentials_source_service_role_crn != null : true
     error_message = "When creating a service_credentials secret, values for `service_credentials_source_service_crn` and `service_credentials_source_service_role_crn` are required."
+  }
+
+  validation {
+    condition     = var.secret_type != "custom_credentials" || var.custom_credentials_configurations != null
+    error_message = "The 'custom_credentials_configurations' variable must be set when 'secret_type' is 'custom_credentials'."
   }
 }
 
@@ -186,4 +191,25 @@ variable "custom_metadata" {
   default     = null
 }
 
+variable "custom_credentials_configurations" {
+  type        = string
+  description = "The name of the custom credentials secret configuration."
+  default     = null
+}
+
+variable "custom_credentials_parameters" {
+  type        = bool
+  description = "Whether to create parameters for custom credentials secret or not"
+  default     = false
+}
+
+variable "job_parameters" {
+  description = "The parameters that are passed to the Code Engine job."
+  type = object({
+    integer_values = optional(map(number))
+    string_values  = optional(map(string))
+    boolean_values = optional(map(bool))
+  })
+  default = {}
+}
 ##############################################################################
