@@ -24,7 +24,7 @@ The following attributes and parameters are supported for all secret types:
 - `secret_type` : The type of the secret.
 - `secret_labels` : Any labels to attach to the secret.
 
-The following attributes and paramters are supported when storing arbitrary secrets:
+The following attributes and parameters are supported when storing arbitrary secrets:
 
 - `secret_payload_password`: The payload (for arbitrary secrets) or password (for username and password credentials) of the secret.
 
@@ -80,7 +80,7 @@ module "secrets_manager_arbitrary_secret" {
   secrets_manager_guid    = "42454b3b-5b06-407b-a4b3-34d9ef323901"
   secret_group_id         = "432b91f1-ff6d-4b47-9f06-82debc236d90"
   secret_name             = "example-arbitrary-secret"
-  secret_description      = "Extended description for the arbirtary secret."
+  secret_description      = "Extended description for the arbitrary secret."
   secret_type             = "arbitrary"
   secret_payload_password = "secret-data" #pragma: allowlist secret
 }
@@ -191,6 +191,7 @@ No modules.
 | Name | Type |
 |------|------|
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
+| [ibm_sm_custom_credentials_secret.custom_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_custom_credentials_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
 | [ibm_sm_kv_secret.kv_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_kv_secret) | resource |
 | [ibm_sm_service_credentials_secret.service_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret) | resource |
@@ -200,11 +201,14 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| <a name="input_custom_credentials_configurations"></a> [custom\_credentials\_configurations](#input\_custom\_credentials\_configurations) | The name of the custom credentials secret configuration. | `string` | `null` | no |
+| <a name="input_custom_credentials_parameters"></a> [custom\_credentials\_parameters](#input\_custom\_credentials\_parameters) | Whether to create parameters for custom credentials secret or not | `bool` | `false` | no |
 | <a name="input_custom_metadata"></a> [custom\_metadata](#input\_custom\_metadata) | Optional metadata to be added to the secret. | `map(string)` | `null` | no |
 | <a name="input_endpoint_type"></a> [endpoint\_type](#input\_endpoint\_type) | The endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private` | `string` | `"public"` | no |
 | <a name="input_imported_cert_certificate"></a> [imported\_cert\_certificate](#input\_imported\_cert\_certificate) | The TLS certificate to import. | `string` | `null` | no |
 | <a name="input_imported_cert_intermediate"></a> [imported\_cert\_intermediate](#input\_imported\_cert\_intermediate) | (optional) The intermediate certificate for the TLS certificate to import. | `string` | `null` | no |
 | <a name="input_imported_cert_private_key"></a> [imported\_cert\_private\_key](#input\_imported\_cert\_private\_key) | (optional) The private key for the TLS certificate to import. | `string` | `null` | no |
+| <a name="input_job_parameters"></a> [job\_parameters](#input\_job\_parameters) | The parameters that are passed to the Code Engine job. | <pre>object({<br/>    integer_values = optional(map(number))<br/>    string_values  = optional(map(string))<br/>    boolean_values = optional(map(bool))<br/>  })</pre> | `{}` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where the Secrets Manager instance is deployed. | `string` | n/a | yes |
 | <a name="input_secret_auto_rotation"></a> [secret\_auto\_rotation](#input\_secret\_auto\_rotation) | Whether to configure automatic rotation. Applies only to the `username_password` and `service_credentials` secret types. | `bool` | `true` | no |
 | <a name="input_secret_auto_rotation_interval"></a> [secret\_auto\_rotation\_interval](#input\_secret\_auto\_rotation\_interval) | Specifies the rotation interval for the rotation unit. | `number` | `89` | no |
@@ -215,7 +219,7 @@ No modules.
 | <a name="input_secret_labels"></a> [secret\_labels](#input\_secret\_labels) | Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (\|). | `list(string)` | `[]` | no |
 | <a name="input_secret_name"></a> [secret\_name](#input\_secret\_name) | Name of the secret to create. | `string` | n/a | yes |
 | <a name="input_secret_payload_password"></a> [secret\_payload\_password](#input\_secret\_payload\_password) | The payload (for arbitrary secrets) or password (for username and password credentials) of the secret. | `string` | `""` | no |
-| <a name="input_secret_type"></a> [secret\_type](#input\_secret\_type) | Type of secret to create, must be one of: arbitrary, username\_password, imported\_cert, service\_credentials | `string` | n/a | yes |
+| <a name="input_secret_type"></a> [secret\_type](#input\_secret\_type) | Type of secret to create, must be one of: arbitrary, username\_password, imported\_cert, service\_credentials, custom\_credentials | `string` | n/a | yes |
 | <a name="input_secret_username"></a> [secret\_username](#input\_secret\_username) | Username of the secret to create. Applies only to `username_password` secret types. When `null`, an `arbitrary` secret is created. | `string` | `null` | no |
 | <a name="input_secrets_manager_guid"></a> [secrets\_manager\_guid](#input\_secrets\_manager\_guid) | The instance ID of the Secrets Manager instance where the secret will be added. | `string` | n/a | yes |
 | <a name="input_service_credentials_existing_serviceid_crn"></a> [service\_credentials\_existing\_serviceid\_crn](#input\_service\_credentials\_existing\_serviceid\_crn) | The optional parameter 'serviceid\_crn' for creating service credentials. If not passed in, a new Service ID will be created. For more information see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_service_credentials_secret#parameters | `string` | `null` | no |
@@ -234,7 +238,7 @@ No modules.
 | <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
 | <a name="output_secret_next_rotation_date"></a> [secret\_next\_rotation\_date](#output\_secret\_next\_rotation\_date) | Next rotation date for secret (if applicable) |
 | <a name="output_secret_rotation"></a> [secret\_rotation](#output\_secret\_rotation) | Status of auto-rotation for secret |
-| <a name="output_secret_rotation_interval"></a> [secret\_rotation\_interval](#output\_secret\_rotation\_interval) | Rotation frecuency for secret (if applicable) |
+| <a name="output_secret_rotation_interval"></a> [secret\_rotation\_interval](#output\_secret\_rotation\_interval) | Rotation frequency for secret (if applicable) |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 
 ## Contributing

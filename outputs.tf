@@ -23,7 +23,7 @@ output "secret_rotation" {
 }
 
 output "secret_rotation_interval" {
-  description = "Rotation frecuency for secret (if applicable)"
+  description = "Rotation frequency for secret (if applicable)"
   value       = local.secret_auto_rotation_frequency
 }
 
