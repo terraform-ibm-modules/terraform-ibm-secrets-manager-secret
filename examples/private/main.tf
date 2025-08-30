@@ -58,6 +58,11 @@ module "secrets_manager_group" {
 # Example working with arbitrary secret
 ##############################################################################
 
+resource "ibm_iam_api_key" "api_key" {
+  name        = "${var.prefix}-api-key"
+  description = "created for secrets-manager-secret complete example"
+}
+
 # create arbitrary secret
 module "secrets_manager_arbitrary_secret" {
   source                  = "../.."
@@ -67,7 +72,7 @@ module "secrets_manager_arbitrary_secret" {
   secret_name             = "${var.prefix}-arbitrary-secret"
   secret_description      = "created by secrets-manager-secret-module private example"
   secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
-  secret_payload_password = local.payload
+  secret_payload_password = ibm_iam_api_key.api_key.apikey
   secret_labels           = local.secret_labels
   endpoint_type           = "private"
 }
@@ -263,4 +268,38 @@ data "ibm_sm_kv_secret" "kv_secret" {
   region        = local.sm_region
   secret_id     = module.secrets_manager_key_value_secret.secret_id
   endpoint_type = "private"
+}
+
+module "custom_credential_engine" {
+  source                        = "git@github.com:terraform-ibm-modules/terraform-ibm-secrets-manager-custom-credentials-engine.git?ref=13662-custom-engine"
+  secrets_manager_guid          = module.secrets_manager.secrets_manager_guid
+  secrets_manager_region        = local.sm_region
+  custom_credential_engine_name = "${var.prefix}-test-custom-engine"
+  endpoint_type                 = "public"
+  code_engine_project_id        = "870f98d4-6b35-4e1a-a85f-ba0652febc82"
+  code_engine_job_name          = "api-job"
+  code_engine_region            = "us-east"
+  task_timeout                  = "10m"
+  service_id_name               = "${var.prefix}-test-service-id"
+  iam_credential_secret_name    = "${var.prefix}-test-iam-secret"
+}
+
+# create custom credentials secret
+module "secret_manager_custom_credential" {
+  depends_on                        = [module.custom_credential_engine]
+  source                            = "../.."
+  secret_type                       = "custom_credentials" #checkov:skip=CKV_SECRET_6
+  region                            = local.sm_region
+  secrets_manager_guid              = module.secrets_manager.secrets_manager_guid
+  secret_name                       = "${var.prefix}-custom-credentials"
+  secret_group_id                   = module.secrets_manager_group.secret_group_id
+  secret_description                = "created by secrets-manager-secret-module private example"
+  custom_credentials_configurations = module.custom_credential_engine.custom_config_engine_name
+  custom_metadata                   = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+  custom_credentials_parameters     = true
+  job_parameters = {
+    string_values = {
+      apikey_secret_id = module.secrets_manager_arbitrary_secret.secret_id
+    }
+  }
 }
