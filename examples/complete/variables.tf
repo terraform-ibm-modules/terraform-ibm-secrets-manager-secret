@@ -7,7 +7,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix to use for naming of all resource created by this example"
-  default     = "test-sm-secret-module"
+  default     = "sm-secret-complete"
 }
 
 variable "sm_service_plan" {
@@ -19,7 +19,7 @@ variable "sm_service_plan" {
 variable "region" {
   type        = string
   description = "Region to provision Secrets Manager in if not passing a value for var.existing_sm_instance_guid"
-  default     = "au-syd"
+  default     = "us-south"
 }
 
 variable "resource_group" {

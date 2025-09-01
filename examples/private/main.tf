@@ -60,7 +60,7 @@ module "secrets_manager_group" {
 
 resource "ibm_iam_api_key" "api_key" {
   name        = "${var.prefix}-api-key"
-  description = "created for secrets-manager-secret complete example"
+  description = "created for secrets-manager-secret private example"
 }
 
 # create arbitrary secret
@@ -270,15 +270,108 @@ data "ibm_sm_kv_secret" "kv_secret" {
   endpoint_type = "private"
 }
 
+##############################################################################
+# Example working with Custom Credential Engine
+##############################################################################
+##############################################################################
+# Code Engine Project
+##############################################################################
+module "code_engine_project" {
+  source            = "terraform-ibm-modules/code-engine/ibm//modules/project"
+  version           = "4.5.8"
+  name              = "${var.prefix}-project"
+  resource_group_id = module.resource_group.resource_group_id
+}
+
+##############################################################################
+# Code Engine Secret
+##############################################################################
+module "code_engine_secret" {
+  source     = "terraform-ibm-modules/code-engine/ibm//modules/secret"
+  version    = "4.5.8"
+  name       = "${var.prefix}-rs"
+  project_id = module.code_engine_project.id
+  format     = "registry"
+  data = {
+    "server"   = "private.us.icr.io",
+    "username" = "iamapikey",
+    "password" = var.ibmcloud_api_key,
+  }
+}
+
+##############################################################################
+# Container Registry Namespace
+##############################################################################
+resource "ibm_cr_namespace" "rg_namespace" {
+  name              = "${var.prefix}-crn"
+  resource_group_id = module.resource_group.resource_group_id
+}
+
+##############################################################################
+# Code Engine Build
+##############################################################################
+locals {
+  output_image = "private.us.icr.io/${resource.ibm_cr_namespace.rg_namespace.name}/custom-engine-job"
+}
+
+module "code_engine_build" {
+  source                     = "terraform-ibm-modules/code-engine/ibm//modules/build"
+  version                    = "4.5.8"
+  name                       = "${var.prefix}-build"
+  ibmcloud_api_key           = var.ibmcloud_api_key
+  project_id                 = module.code_engine_project.id
+  existing_resource_group_id = module.resource_group.resource_group_id
+  source_url                 = "https://github.com/IBM/secrets-manager-custom-credentials-providers"
+  source_context_dir         = "ibmcloud-iam-user-apikey-provider-go"
+  strategy_type              = "dockerfile"
+  output_secret              = module.code_engine_secret.name
+  output_image               = local.output_image
+}
+
+##############################################################################
+# Code Engine Job
+##############################################################################
+
+data "http" "job_config" {
+  url = "https://raw.githubusercontent.com/IBM/secrets-manager-custom-credentials-providers/refs/heads/main/ibmcloud-iam-user-apikey-provider-go/job_config.json"
+  request_headers = {
+    Accept = "application/json"
+  }
+}
+
+locals {
+  job_env_variables = jsondecode(data.http.job_config.response_body).job_env_variables
+}
+
+module "code_engine_job" {
+  source          = "terraform-ibm-modules/code-engine/ibm//modules/job"
+  version         = "4.5.8"
+  name            = "${var.prefix}-job"
+  image_reference = local.output_image
+  image_secret    = module.code_engine_secret.name
+  project_id      = module.code_engine_project.id
+  run_env_variables = [
+    for env_var in local.job_env_variables : {
+      type  = "literal"
+      name  = env_var.name
+      value = tostring(env_var.value)
+    }
+  ]
+}
+
+##############################################################################
+# Custom Credential Engine and secret
+##############################################################################
+
 module "custom_credential_engine" {
   source                        = "git@github.com:terraform-ibm-modules/terraform-ibm-secrets-manager-custom-credentials-engine.git?ref=13662-custom-engine"
   secrets_manager_guid          = module.secrets_manager.secrets_manager_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
-  endpoint_type                 = "public"
-  code_engine_project_id        = "870f98d4-6b35-4e1a-a85f-ba0652febc82"
-  code_engine_job_name          = "api-job"
-  code_engine_region            = "us-east"
+  endpoint_type                 = "private"
+  code_engine_project_id        = module.code_engine_project.project_id
+  code_engine_job_name          = module.code_engine_job.name
+  code_engine_region            = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
   task_timeout                  = "10m"
   service_id_name               = "${var.prefix}-test-service-id"
   iam_credential_secret_name    = "${var.prefix}-test-iam-secret"
