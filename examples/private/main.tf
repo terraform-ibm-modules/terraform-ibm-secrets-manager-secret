@@ -364,7 +364,8 @@ module "code_engine_job" {
 ##############################################################################
 
 module "custom_credential_engine" {
-  source                        = "git@github.com:terraform-ibm-modules/terraform-ibm-secrets-manager-custom-credentials-engine.git?ref=13662-custom-engine"
+  source                        = "terraform-ibm-modules/secrets-manager-custom-credentials-engine/ibm"
+  version                       = "1.0.0"
   secrets_manager_guid          = module.secrets_manager.secrets_manager_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
