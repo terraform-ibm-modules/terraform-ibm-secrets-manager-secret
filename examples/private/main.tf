@@ -58,11 +58,6 @@ module "secrets_manager_group" {
 # Example working with arbitrary secret
 ##############################################################################
 
-resource "ibm_iam_api_key" "api_key" {
-  name        = "${var.prefix}-api-key"
-  description = "created for secrets-manager-secret private example"
-}
-
 # create arbitrary secret
 module "secrets_manager_arbitrary_secret" {
   source                  = "../.."
@@ -72,7 +67,7 @@ module "secrets_manager_arbitrary_secret" {
   secret_name             = "${var.prefix}-arbitrary-secret"
   secret_description      = "created by secrets-manager-secret-module private example"
   secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
-  secret_payload_password = ibm_iam_api_key.api_key.apikey
+  secret_payload_password = local.payload
   secret_labels           = local.secret_labels
   endpoint_type           = "private"
 }
@@ -205,7 +200,7 @@ module "secret_manager_imported_cert" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                              = "terraform-ibm-modules/cos/ibm"
-  version                             = "10.2.11"
+  version                             = "10.2.6"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = local.sm_region
   cos_instance_name                   = "${var.prefix}-cos"
@@ -293,7 +288,7 @@ module "code_engine_secret" {
   project_id = module.code_engine_project.id
   format     = "registry"
   data = {
-    "server"   = "private.us.icr.io",
+    "server"   = "private.uk.icr.io",
     "username" = "iamapikey",
     "password" = var.ibmcloud_api_key,
   }
@@ -311,7 +306,7 @@ resource "ibm_cr_namespace" "rg_namespace" {
 # Code Engine Build
 ##############################################################################
 locals {
-  output_image = "private.us.icr.io/${resource.ibm_cr_namespace.rg_namespace.name}/custom-engine-job"
+  output_image = "private.uk.icr.io/${resource.ibm_cr_namespace.rg_namespace.name}/custom-engine-job"
 }
 
 module "code_engine_build" {
@@ -319,6 +314,7 @@ module "code_engine_build" {
   version                    = "4.5.8"
   name                       = "${var.prefix}-build"
   ibmcloud_api_key           = var.ibmcloud_api_key
+  region                     = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
   project_id                 = module.code_engine_project.id
   existing_resource_group_id = module.resource_group.resource_group_id
   source_url                 = "https://github.com/IBM/secrets-manager-custom-credentials-providers"
@@ -378,6 +374,24 @@ module "custom_credential_engine" {
   iam_credential_secret_name    = "${var.prefix}-test-iam-secret"
 }
 
+resource "ibm_iam_api_key" "api_key" {
+  name        = "${var.prefix}-api-key"
+  description = "created for secrets-manager-secret complete example"
+}
+
+module "secrets_manager_custom_arbitrary_secret" {
+  source                  = "../.."
+  region                  = local.sm_region
+  secrets_manager_guid    = module.secrets_manager.secrets_manager_guid
+  secret_group_id         = module.secrets_manager_group.secret_group_id
+  secret_name             = "${var.prefix}-custom-arbitrary-secret"
+  secret_description      = "created by secrets-manager-secret-module private example"
+  secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
+  secret_payload_password = ibm_iam_api_key.api_key.apikey
+  secret_labels           = local.secret_labels
+  endpoint_type           = "private"
+}
+
 # create custom credentials secret
 module "secret_manager_custom_credential" {
   depends_on                        = [module.custom_credential_engine]
@@ -393,7 +407,8 @@ module "secret_manager_custom_credential" {
   custom_credentials_parameters     = true
   job_parameters = {
     string_values = {
-      apikey_secret_id = module.secrets_manager_arbitrary_secret.secret_id
+      apikey_secret_id = module.secrets_manager_custom_arbitrary_secret.secret_id
     }
   }
+  endpoint_type = "private"
 }

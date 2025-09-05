@@ -78,7 +78,6 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 
 func TestRunCompleteExample(t *testing.T) {
 	t.Parallel()
-	t.Skip()
 
 	options := setupOptions(t, "sm-secret-module", terraformDir)
 	output, err := options.RunTestConsistency()
@@ -88,7 +87,6 @@ func TestRunCompleteExample(t *testing.T) {
 
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
-	t.Skip()
 
 	options := setupOptions(t, "sm-secret-module-upg", terraformDir)
 	output, err := options.RunTestUpgrade()

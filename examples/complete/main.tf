@@ -57,11 +57,6 @@ module "secrets_manager_group" {
 # Example working with arbitrary secret
 ##############################################################################
 
-resource "ibm_iam_api_key" "api_key" {
-  name        = "${var.prefix}-api-key"
-  description = "created for secrets-manager-secret complete example"
-}
-
 # create arbitrary secret
 module "secrets_manager_arbitrary_secret" {
   source                  = "../.."
@@ -71,7 +66,7 @@ module "secrets_manager_arbitrary_secret" {
   secret_name             = "${var.prefix}-arbitrary-secret"
   secret_description      = "created by secrets-manager-secret-module complete example"
   secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
-  secret_payload_password = ibm_iam_api_key.api_key.apikey
+  secret_payload_password = local.payload
   secret_labels           = local.secret_labels
   custom_metadata         = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
 }
@@ -376,6 +371,25 @@ module "custom_credential_engine" {
   iam_credential_secret_name    = "${var.prefix}-test-iam-secret"
 }
 
+resource "ibm_iam_api_key" "api_key" {
+  name        = "${var.prefix}-api-key"
+  description = "created for secrets-manager-secret complete example"
+}
+
+# create arbitrary secret
+module "secrets_manager_custom_arbitrary_secret" {
+  source                  = "../.."
+  region                  = local.sm_region
+  secrets_manager_guid    = local.sm_guid
+  secret_group_id         = module.secrets_manager_group.secret_group_id
+  secret_name             = "${var.prefix}-custom-arbitrary-secret"
+  secret_description      = "created by secrets-manager-secret-module complete example"
+  secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
+  secret_payload_password = ibm_iam_api_key.api_key.apikey
+  secret_labels           = local.secret_labels
+  custom_metadata         = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+}
+
 # create custom credentials secret
 module "secret_manager_custom_credential" {
   depends_on                        = [module.custom_credential_engine]
@@ -391,7 +405,7 @@ module "secret_manager_custom_credential" {
   custom_credentials_parameters     = true
   job_parameters = {
     string_values = {
-      apikey_secret_id = module.secrets_manager_arbitrary_secret.secret_id
+      apikey_secret_id = module.secrets_manager_custom_arbitrary_secret.secret_id
     }
   }
 }

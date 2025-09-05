@@ -19,7 +19,7 @@ variable "sm_service_plan" {
 variable "region" {
   type        = string
   description = "Region to provision Secrets Manager in if not passing a value for var.existing_sm_instance_guid"
-  default     = "us-south"
+  default     = "us-south" # Region is hard-coded to us-south so as to restrict the code engine project to be created in the same region and have a hardcoded output image
 }
 
 variable "resource_group" {
@@ -36,7 +36,7 @@ variable "resource_tags" {
 
 variable "existing_sm_instance_guid" {
   type        = string
-  description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned"
+  description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned. If existing_sm_instance_guid needs to be used make sure the instance passed belongs to us-south region"
   default     = null
 
   validation {
