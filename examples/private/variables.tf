@@ -19,7 +19,7 @@ variable "sm_service_plan" {
 variable "region" {
   type        = string
   description = "Region to provision Secrets Manager in if not passing a value for var.existing_sm_instance_guid"
-  default     = "eu-gb" # Region is hard-coded to eu-gb so as to restrict the code engine project to be created in the same region and have a hardcoded output image
+  default     = "eu-gb" # Region is defaulted to eu-gb so as to restrict the code engine project to be created in the same region and have a hardcoded output image as `private.uk`
 }
 
 variable "resource_group" {
