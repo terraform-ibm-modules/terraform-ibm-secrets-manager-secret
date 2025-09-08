@@ -6,6 +6,7 @@
 
 locals {
   auto_rotation_enabled = var.secret_auto_rotation == true ? [1] : []
+  parameters_enabled    = var.custom_credentials_parameters == true ? [1] : []
 }
 
 resource "ibm_sm_arbitrary_secret" "arbitrary_secret" {
@@ -129,6 +130,36 @@ resource "ibm_sm_kv_secret" "kv_secret" {
   custom_metadata = var.custom_metadata
 }
 
+resource "ibm_sm_custom_credentials_secret" "custom_credentials_secret" {
+  count           = var.secret_type == "custom_credentials" ? 1 : 0 #checkov:skip=CKV_SECRET_6
+  instance_id     = var.secrets_manager_guid
+  region          = var.region
+  name            = var.secret_name
+  endpoint_type   = var.endpoint_type
+  secret_group_id = var.secret_group_id
+  custom_metadata = var.custom_metadata
+  description     = var.secret_description
+  labels          = var.secret_labels
+  configuration   = var.custom_credentials_configurations
+  dynamic "parameters" {
+    for_each = local.parameters_enabled
+    content {
+      integer_values = var.job_parameters.integer_values
+      string_values  = var.job_parameters.string_values
+      boolean_values = var.job_parameters.boolean_values
+    }
+  }
+  dynamic "rotation" {
+    for_each = local.auto_rotation_enabled
+    content {
+      auto_rotate = var.secret_auto_rotation
+      interval    = var.secret_auto_rotation_interval
+      unit        = var.secret_auto_rotation_unit
+    }
+  }
+  ttl = var.service_credentials_ttl
+}
+
 # Parse secret ID and generate data header for secrets
 locals {
   secret_id = (
@@ -136,21 +167,24 @@ locals {
     var.secret_type == "imported_cert" ? ibm_sm_imported_certificate.imported_cert[0].secret_id :
     var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].secret_id :
     var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].secret_id :
-    var.secret_type == "key_value" ? ibm_sm_kv_secret.kv_secret[0].secret_id : null
+    var.secret_type == "key_value" ? ibm_sm_kv_secret.kv_secret[0].secret_id :
+    var.secret_type == "custom_credentials" ? ibm_sm_custom_credentials_secret.custom_credentials_secret[0].secret_id : null
   )
   secret_crn = (
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].crn :
     var.secret_type == "imported_cert" ? ibm_sm_imported_certificate.imported_cert[0].crn :
     var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].crn :
     var.secret_type == "arbitrary" ? ibm_sm_arbitrary_secret.arbitrary_secret[0].crn :
-    var.secret_type == "key_value" ? ibm_sm_kv_secret.kv_secret[0].crn : null
+    var.secret_type == "key_value" ? ibm_sm_kv_secret.kv_secret[0].crn :
+    var.secret_type == "custom_credentials" ? ibm_sm_custom_credentials_secret.custom_credentials_secret[0].crn : null
   )
   #tfsec:ignore:general-secrets-no-plaintext-exposure
   secret_auto_rotation_frequency = var.secret_auto_rotation == true ? "${var.secret_auto_rotation_interval} ${var.secret_auto_rotation_unit}(s)" : null #tfsec:ignore:general-secrets-no-plaintext-exposure
   secret_next_rotation_date = (
     var.secret_auto_rotation == true ?
     var.secret_type == "username_password" ? ibm_sm_username_password_secret.username_password_secret[0].next_rotation_date :
-    var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].next_rotation_date : null : null
+    var.secret_type == "service_credentials" ? ibm_sm_service_credentials_secret.service_credentials_secret[0].next_rotation_date :
+    var.secret_type == "custom_credentials" ? ibm_sm_custom_credentials_secret.custom_credentials_secret[0].next_rotation_date : null : null
   )
   secret_auto_rotation = (var.secret_type == "username_password" || var.secret_type == "service_credentials") ? var.secret_auto_rotation : null
 }

@@ -7,7 +7,7 @@ variable "ibmcloud_api_key" {
 variable "prefix" {
   type        = string
   description = "Prefix to use for naming of all resource created by this example"
-  default     = "test-sm-secret-module"
+  default     = "sm-secret-complete"
 }
 
 variable "sm_service_plan" {
@@ -19,7 +19,7 @@ variable "sm_service_plan" {
 variable "region" {
   type        = string
   description = "Region to provision Secrets Manager in if not passing a value for var.existing_sm_instance_guid"
-  default     = "au-syd"
+  default     = "us-south" # Region is defaulted to us-south so as to restrict the code engine project to be created in the same region and have a hardcoded output image as `private.us`
 }
 
 variable "resource_group" {
@@ -36,7 +36,7 @@ variable "resource_tags" {
 
 variable "existing_sm_instance_guid" {
   type        = string
-  description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned"
+  description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned. If existing_sm_instance_guid needs to be used make sure the instance passed belongs to us-south region"
   default     = null
 
   validation {

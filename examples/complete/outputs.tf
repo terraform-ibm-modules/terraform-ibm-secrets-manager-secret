@@ -105,3 +105,13 @@ output "kv_secret_payload" {
   sensitive   = true
   description = "accessing key value secret"
 }
+
+output "custom_credential_secret_id" {
+  description = "ID of the created custom_credential secret"
+  value       = module.secret_manager_custom_credential.secret_id
+}
+
+output "custom_credential_secret_crn" {
+  description = "CRN of the created custom_credential secret"
+  value       = module.secret_manager_custom_credential.secret_crn
+}

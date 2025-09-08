@@ -260,3 +260,152 @@ data "ibm_sm_kv_secret" "kv_secret" {
   region      = local.sm_region
   secret_id   = module.secrets_manager_key_value_secret.secret_id
 }
+
+##############################################################################
+# Example working with Custom Credential Engine
+##############################################################################
+##############################################################################
+# Code Engine Project
+##############################################################################
+module "code_engine_project" {
+  source            = "terraform-ibm-modules/code-engine/ibm//modules/project"
+  version           = "4.5.8"
+  name              = "${var.prefix}-project"
+  resource_group_id = module.resource_group.resource_group_id
+}
+
+##############################################################################
+# Code Engine Secret
+##############################################################################
+module "code_engine_secret" {
+  source     = "terraform-ibm-modules/code-engine/ibm//modules/secret"
+  version    = "4.5.8"
+  name       = "${var.prefix}-rs"
+  project_id = module.code_engine_project.id
+  format     = "registry"
+  data = {
+    "server"   = "private.us.icr.io",
+    "username" = "iamapikey",
+    "password" = var.ibmcloud_api_key,
+  }
+}
+
+##############################################################################
+# Container Registry Namespace
+##############################################################################
+resource "ibm_cr_namespace" "rg_namespace" {
+  name              = "${var.prefix}-crn"
+  resource_group_id = module.resource_group.resource_group_id
+}
+
+##############################################################################
+# Code Engine Build
+##############################################################################
+locals {
+  output_image = "private.us.icr.io/${resource.ibm_cr_namespace.rg_namespace.name}/custom-engine-job"
+}
+
+module "code_engine_build" {
+  source                     = "terraform-ibm-modules/code-engine/ibm//modules/build"
+  version                    = "4.5.8"
+  name                       = "${var.prefix}-build"
+  ibmcloud_api_key           = var.ibmcloud_api_key
+  project_id                 = module.code_engine_project.id
+  existing_resource_group_id = module.resource_group.resource_group_id
+  source_url                 = "https://github.com/IBM/secrets-manager-custom-credentials-providers"
+  source_context_dir         = "ibmcloud-iam-user-apikey-provider-go"
+  strategy_type              = "dockerfile"
+  output_secret              = module.code_engine_secret.name
+  output_image               = local.output_image
+}
+
+##############################################################################
+# Code Engine Job
+##############################################################################
+
+data "http" "job_config" {
+  url = "https://raw.githubusercontent.com/IBM/secrets-manager-custom-credentials-providers/refs/heads/main/ibmcloud-iam-user-apikey-provider-go/job_config.json"
+  request_headers = {
+    Accept = "application/json"
+  }
+}
+
+locals {
+  job_env_variables = jsondecode(data.http.job_config.response_body).job_env_variables
+}
+
+module "code_engine_job" {
+  depends_on      = [module.code_engine_build]
+  source          = "terraform-ibm-modules/code-engine/ibm//modules/job"
+  version         = "4.5.8"
+  name            = "${var.prefix}-job"
+  image_reference = local.output_image
+  image_secret    = module.code_engine_secret.name
+  project_id      = module.code_engine_project.id
+  run_env_variables = [
+    for env_var in local.job_env_variables : {
+      type  = "literal"
+      name  = env_var.name
+      value = tostring(env_var.value)
+    }
+  ]
+}
+
+##############################################################################
+# Custom Credential Engine and secret
+##############################################################################
+
+module "custom_credential_engine" {
+  depends_on                    = [module.code_engine_job]
+  source                        = "terraform-ibm-modules/secrets-manager-custom-credentials-engine/ibm"
+  version                       = "1.0.0"
+  secrets_manager_guid          = local.sm_guid
+  secrets_manager_region        = local.sm_region
+  custom_credential_engine_name = "${var.prefix}-test-custom-engine"
+  endpoint_type                 = "public"
+  code_engine_project_id        = module.code_engine_project.project_id
+  code_engine_job_name          = module.code_engine_job.name
+  code_engine_region            = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
+  task_timeout                  = "10m"
+  service_id_name               = "${var.prefix}-test-service-id"
+  iam_credential_secret_name    = "${var.prefix}-test-iam-secret"
+}
+
+resource "ibm_iam_api_key" "api_key" {
+  name        = "${var.prefix}-api-key"
+  description = "created for secrets-manager-secret complete example"
+}
+
+# create arbitrary secret
+module "secrets_manager_custom_arbitrary_secret" {
+  source                  = "../.."
+  region                  = local.sm_region
+  secrets_manager_guid    = local.sm_guid
+  secret_group_id         = module.secrets_manager_group.secret_group_id
+  secret_name             = "${var.prefix}-custom-arbitrary-secret"
+  secret_description      = "created by secrets-manager-secret-module complete example"
+  secret_type             = "arbitrary" #checkov:skip=CKV_SECRET_6
+  secret_payload_password = ibm_iam_api_key.api_key.apikey
+  secret_labels           = local.secret_labels
+  custom_metadata         = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+}
+
+# create custom credentials secret
+module "secret_manager_custom_credential" {
+  depends_on                        = [module.custom_credential_engine]
+  source                            = "../.."
+  secret_type                       = "custom_credentials" #checkov:skip=CKV_SECRET_6
+  region                            = local.sm_region
+  secrets_manager_guid              = local.sm_guid
+  secret_name                       = "${var.prefix}-custom-credentials"
+  secret_group_id                   = module.secrets_manager_group.secret_group_id
+  secret_description                = "created by secrets-manager-secret-module complete example"
+  custom_credentials_configurations = module.custom_credential_engine.custom_config_engine_name
+  custom_metadata                   = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+  custom_credentials_parameters     = true
+  job_parameters = {
+    string_values = {
+      apikey_secret_id = module.secrets_manager_custom_arbitrary_secret.secret_id
+    }
+  }
+}
