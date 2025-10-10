@@ -206,7 +206,7 @@ module "cloud_object_storage" {
   cos_instance_name                   = "${var.prefix}-cos"
   cos_tags                            = var.resource_tags
   create_cos_bucket                   = false
-  management_endpoint_type_for_bucket = "private"
+  management_endpoint_type_for_bucket = "direct"
   activity_tracker_read_data_events   = false
   activity_tracker_write_data_events  = false
   request_metrics_enabled             = false
