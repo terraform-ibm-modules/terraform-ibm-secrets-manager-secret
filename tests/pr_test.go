@@ -86,7 +86,8 @@ func TestRunCompleteExample(t *testing.T) {
 }
 
 func TestRunUpgradeExample(t *testing.T) {
-	t.Parallel()
+	// Exclude from parallel due to race condition with TestRunCompleteExample
+	// t.Parallel()
 
 	options := setupOptions(t, "sm-secret-module-upg", terraformDir)
 	output, err := options.RunTestUpgrade()
