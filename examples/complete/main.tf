@@ -31,7 +31,7 @@ module "resource_group" {
 module "secrets_manager" {
   count                = var.existing_sm_instance_guid == null ? 1 : 0
   source               = "terraform-ibm-modules/secrets-manager/ibm"
-  version              = "2.11.7"
+  version              = "2.11.8"
   resource_group_id    = module.resource_group.resource_group_id
   region               = local.sm_region
   secrets_manager_name = "${var.prefix}-secrets-manager"
@@ -196,7 +196,7 @@ module "secret_manager_imported_cert" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                             = "terraform-ibm-modules/cos/ibm"
-  version                            = "10.5.6"
+  version                            = "10.5.7"
   resource_group_id                  = module.resource_group.resource_group_id
   region                             = var.region
   cos_instance_name                  = "${var.prefix}-cos"
@@ -358,7 +358,7 @@ module "code_engine_job" {
 module "custom_credential_engine" {
   depends_on                    = [module.code_engine_job]
   source                        = "terraform-ibm-modules/secrets-manager-custom-credentials-engine/ibm"
-  version                       = "1.0.8"
+  version                       = "1.0.9"
   secrets_manager_guid          = local.sm_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
