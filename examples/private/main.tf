@@ -200,7 +200,7 @@ module "secret_manager_imported_cert" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                              = "terraform-ibm-modules/cos/ibm"
-  version                             = "10.7.5"
+  version                             = "10.7.6"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = local.sm_region
   cos_instance_name                   = "${var.prefix}-cos"
@@ -273,7 +273,7 @@ data "ibm_sm_kv_secret" "kv_secret" {
 ##############################################################################
 module "code_engine_project" {
   source            = "terraform-ibm-modules/code-engine/ibm//modules/project"
-  version           = "4.7.11"
+  version           = "4.7.12"
   name              = "${var.prefix}-project"
   resource_group_id = module.resource_group.resource_group_id
 }
@@ -283,7 +283,7 @@ module "code_engine_project" {
 ##############################################################################
 module "code_engine_secret" {
   source     = "terraform-ibm-modules/code-engine/ibm//modules/secret"
-  version    = "4.7.11"
+  version    = "4.7.12"
   name       = "${var.prefix}-rs"
   project_id = module.code_engine_project.id
   format     = "registry"
@@ -311,7 +311,7 @@ locals {
 
 module "code_engine_build" {
   source                     = "terraform-ibm-modules/code-engine/ibm//modules/build"
-  version                    = "4.7.11"
+  version                    = "4.7.12"
   name                       = "${var.prefix}-build"
   ibmcloud_api_key           = var.ibmcloud_api_key
   region                     = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
@@ -341,7 +341,7 @@ locals {
 
 module "code_engine_job" {
   source          = "terraform-ibm-modules/code-engine/ibm//modules/job"
-  version         = "4.7.11"
+  version         = "4.7.12"
   name            = "${var.prefix}-job"
   image_reference = local.output_image
   image_secret    = module.code_engine_secret.name
@@ -361,7 +361,7 @@ module "code_engine_job" {
 
 module "custom_credential_engine" {
   source                        = "terraform-ibm-modules/secrets-manager-custom-credentials-engine/ibm"
-  version                       = "1.0.13"
+  version                       = "1.0.14"
   secrets_manager_guid          = module.secrets_manager.secrets_manager_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
