@@ -46,7 +46,7 @@ module "secrets_manager" {
 
 module "secrets_manager_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.3.35"
+  version                  = "1.3.36"
   region                   = local.sm_region
   secrets_manager_guid     = local.sm_guid
   secret_group_name        = "${var.prefix}-group"
@@ -269,7 +269,7 @@ data "ibm_sm_kv_secret" "kv_secret" {
 ##############################################################################
 module "code_engine_project" {
   source            = "terraform-ibm-modules/code-engine/ibm//modules/project"
-  version           = "4.7.19"
+  version           = "4.7.20"
   name              = "${var.prefix}-project"
   resource_group_id = module.resource_group.resource_group_id
 }
@@ -279,7 +279,7 @@ module "code_engine_project" {
 ##############################################################################
 module "code_engine_secret" {
   source     = "terraform-ibm-modules/code-engine/ibm//modules/secret"
-  version    = "4.7.19"
+  version    = "4.7.20"
   name       = "${var.prefix}-rs"
   project_id = module.code_engine_project.id
   format     = "registry"
@@ -307,7 +307,7 @@ locals {
 
 module "code_engine_build" {
   source                     = "terraform-ibm-modules/code-engine/ibm//modules/build"
-  version                    = "4.7.19"
+  version                    = "4.7.20"
   name                       = "${var.prefix}-build"
   ibmcloud_api_key           = var.ibmcloud_api_key
   project_id                 = module.code_engine_project.id
@@ -337,7 +337,7 @@ locals {
 module "code_engine_job" {
   depends_on      = [module.code_engine_build]
   source          = "terraform-ibm-modules/code-engine/ibm//modules/job"
-  version         = "4.7.19"
+  version         = "4.7.20"
   name            = "${var.prefix}-job"
   image_reference = local.output_image
   image_secret    = module.code_engine_secret.name
@@ -358,7 +358,7 @@ module "code_engine_job" {
 module "custom_credential_engine" {
   depends_on                    = [module.code_engine_job]
   source                        = "terraform-ibm-modules/secrets-manager-custom-credentials-engine/ibm"
-  version                       = "1.0.19"
+  version                       = "1.0.20"
   secrets_manager_guid          = local.sm_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
