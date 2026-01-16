@@ -94,14 +94,16 @@ variable "secret_labels" {
   default     = []
 
   validation {
-    condition     = length(var.secret_labels) <= 30
+    condition     = length(var.secret_labels == null ? [] : var.secret_labels) <= 30
     error_message = "Up to 30 labels can be created."
   }
 
   validation {
-    condition = alltrue([
-      for label in var.secret_labels : length(label) <= 64 && length(label) >= 2
-    ])
+    condition = alltrue(
+      var.secret_labels == null ?
+      [true] :
+      [for label in var.secret_labels : length(label) <= 64 && length(label) >= 2]
+    )
     error_message = "Labels must be between 2 and 64 characters."
   }
 }
