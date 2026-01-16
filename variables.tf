@@ -90,12 +90,21 @@ variable "secret_username" {
 
 variable "secret_labels" {
   type        = list(string)
-  description = "Labels of the secret to create. Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (|)."
+  description = "Labels that can be used to search for secrets within the instance. Up to 30 labels can be created. Labels can be between 2 and 64 characters."
   default     = []
 
   validation {
-    condition     = (length(var.secret_labels) <= 30) && (length(var.secret_labels) > 0 ? can([for label in var.secret_labels : regex("^[^<>,:&|]{2,30}$", label)]) : true)
-    error_message = "Up to 30 labels can be created. Labels can be 2 - 30 characters, including spaces. Special characters that are not permitted include the angled brackets (<>), comma (,), colon (:), ampersand (&), and vertical pipe character (|)."
+    condition     = length(var.secret_labels == null ? [] : var.secret_labels) <= 30
+    error_message = "Up to 30 labels can be created."
+  }
+
+  validation {
+    condition = alltrue(
+      var.secret_labels == null ?
+      [true] :
+      [for label in var.secret_labels : length(label) <= 64 && length(label) >= 2]
+    )
+    error_message = "Labels must be between 2 and 64 characters."
   }
 }
 
