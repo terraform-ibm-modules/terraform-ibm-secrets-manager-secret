@@ -28,7 +28,7 @@ module "resource_group" {
 
 module "secrets_manager" {
   source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "2.13.0"
+  version                       = "2.13.1"
   existing_sm_instance_crn      = var.existing_sm_instance_crn
   resource_group_id             = module.resource_group.resource_group_id
   region                        = local.sm_region
