@@ -205,7 +205,6 @@ module "cloud_object_storage" {
   activity_tracker_read_data_events  = false
   activity_tracker_write_data_events = false
   request_metrics_enabled            = false
-  retention_enabled                  = false # disable retention for test environments - enable for stage/prod
   kms_encryption_enabled             = false
   usage_metrics_enabled              = false
 }
