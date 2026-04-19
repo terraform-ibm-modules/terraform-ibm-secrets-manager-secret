@@ -16,7 +16,7 @@ locals {
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.4.8"
+  version = "1.6.0"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -28,7 +28,7 @@ module "resource_group" {
 
 module "secrets_manager" {
   source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "2.13.9"
+  version                       = "2.14.0"
   existing_sm_instance_crn      = var.existing_sm_instance_crn
   resource_group_id             = module.resource_group.resource_group_id
   region                        = local.sm_region
@@ -46,7 +46,7 @@ module "secrets_manager" {
 
 module "secrets_manager_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.4.8"
+  version                  = "1.5.0"
   region                   = local.sm_region
   secrets_manager_guid     = module.secrets_manager.secrets_manager_guid
   secret_group_name        = "${var.prefix}-group"
@@ -200,7 +200,7 @@ module "secret_manager_imported_cert" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                              = "terraform-ibm-modules/cos/ibm"
-  version                             = "10.14.8"
+  version                             = "10.15.1"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = local.sm_region
   cos_instance_name                   = "${var.prefix}-cos"
@@ -210,7 +210,6 @@ module "cloud_object_storage" {
   activity_tracker_read_data_events   = false
   activity_tracker_write_data_events  = false
   request_metrics_enabled             = false
-  retention_enabled                   = false # disable retention for test environments - enable for stage/prod
   kms_encryption_enabled              = false
   usage_metrics_enabled               = false
 }
