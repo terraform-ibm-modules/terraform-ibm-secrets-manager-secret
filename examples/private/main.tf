@@ -204,13 +204,12 @@ module "cloud_object_storage" {
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = local.sm_region
   cos_instance_name                   = "${var.prefix}-cos"
-  cos_tags                            = var.resource_tags
+  resource_tags                       = var.resource_tags
   create_cos_bucket                   = false
   management_endpoint_type_for_bucket = "direct"
   activity_tracker_read_data_events   = false
   activity_tracker_write_data_events  = false
   request_metrics_enabled             = false
-  retention_enabled                   = false # disable retention for test environments - enable for stage/prod
   kms_encryption_enabled              = false
   usage_metrics_enabled               = false
 }
