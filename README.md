@@ -59,12 +59,23 @@ The following attributes and parameters are supported when creating Key Value se
 <!-- Below content is automatically populated via pre-commit hook -->
 <!-- BEGIN OVERVIEW HOOK -->
 ## Overview
-* [terraform-ibm-secrets-manager-secret](#terraform-ibm-secrets-manager-secret)
-* [Examples](./examples)
-:information_source: Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab
-    * <a href="./examples/complete">Example creating arbitrary, username_password and imported_cert type secrets</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=secrets-manager-secret-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-    * <a href="./examples/private">Private-Only Secret Manager example</a> <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=secrets-manager-secret-private-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/tree/main/examples/private"><img src="https://img.shields.io/badge/Deploy%20with IBM%20Cloud%20Schematics-0f62fe?logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
-* [Contributing](#contributing)
+<ul>
+  <li><a href="#terraform-ibm-secrets-manager-secret">terraform-ibm-secrets-manager-secret</a></li>
+  <li><a href="./examples">Examples</a>
+    <ul>
+      <li>
+        <a href="./examples/complete">Example creating arbitrary, username_password and imported_cert type secrets</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=secrets-manager-secret-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+      <li>
+        <a href="./examples/private">Private-Only Secret Manager example</a>
+        <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=secrets-manager-secret-private-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-secrets-manager-secret/tree/main/examples/private"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
+      </li>
+    </ul>
+    ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
+  </li>
+  <li><a href="#contributing">Contributing</a></li>
+</ul>
 <!-- END OVERVIEW HOOK -->
 
 ## terraform-ibm-secrets-manager-secret
