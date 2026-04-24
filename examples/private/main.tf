@@ -46,7 +46,7 @@ module "secrets_manager" {
 
 module "secrets_manager_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.5.0"
+  version                  = "1.5.1"
   region                   = local.sm_region
   secrets_manager_guid     = module.secrets_manager.secrets_manager_guid
   secret_group_name        = "${var.prefix}-group"
@@ -200,7 +200,7 @@ module "secret_manager_imported_cert" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                              = "terraform-ibm-modules/cos/ibm"
-  version                             = "10.15.3"
+  version                             = "10.16.0"
   resource_group_id                   = module.resource_group.resource_group_id
   region                              = local.sm_region
   cos_instance_name                   = "${var.prefix}-cos"
@@ -272,7 +272,7 @@ data "ibm_sm_kv_secret" "kv_secret" {
 ##############################################################################
 module "code_engine_project" {
   source            = "terraform-ibm-modules/code-engine/ibm//modules/project"
-  version           = "4.8.3"
+  version           = "4.9.0"
   name              = "${var.prefix}-project"
   resource_group_id = module.resource_group.resource_group_id
 }
@@ -282,7 +282,7 @@ module "code_engine_project" {
 ##############################################################################
 module "code_engine_secret" {
   source     = "terraform-ibm-modules/code-engine/ibm//modules/secret"
-  version    = "4.8.3"
+  version    = "4.9.0"
   name       = "${var.prefix}-rs"
   project_id = module.code_engine_project.id
   format     = "registry"
@@ -310,7 +310,7 @@ locals {
 
 module "code_engine_build" {
   source                     = "terraform-ibm-modules/code-engine/ibm//modules/build"
-  version                    = "4.8.3"
+  version                    = "4.9.0"
   name                       = "${var.prefix}-build"
   ibmcloud_api_key           = var.ibmcloud_api_key
   region                     = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
@@ -340,7 +340,7 @@ locals {
 
 module "code_engine_job" {
   source          = "terraform-ibm-modules/code-engine/ibm//modules/job"
-  version         = "4.8.3"
+  version         = "4.9.0"
   name            = "${var.prefix}-job"
   image_reference = local.output_image
   image_secret    = module.code_engine_secret.name
