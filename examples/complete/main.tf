@@ -301,7 +301,7 @@ resource "ibm_cr_namespace" "rg_namespace" {
 # Code Engine Build
 ##############################################################################
 locals {
-  output_image = "private.us.icr.io/${resource.ibm_cr_namespace.rg_namespace.name}/custom-engine-job"
+  output_image = "private.au.icr.io/${resource.ibm_cr_namespace.rg_namespace.name}/custom-engine-job"
 }
 
 module "code_engine_build" {
