@@ -31,13 +31,13 @@ module "resource_group" {
 module "secrets_manager" {
   count                = var.existing_sm_instance_guid == null ? 1 : 0
   source               = "terraform-ibm-modules/secrets-manager/ibm"
-  version              = "2.14.2"
+  version              = "2.15.0"
   resource_group_id    = module.resource_group.resource_group_id
   region               = local.sm_region
   secrets_manager_name = "${var.prefix}-secrets-manager"
   sm_service_plan      = var.sm_service_plan
   allowed_network      = "public-and-private"
-  sm_tags              = var.resource_tags
+  resource_tags        = var.resource_tags
 }
 
 ##############################################################################
