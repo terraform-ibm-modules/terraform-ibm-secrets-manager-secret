@@ -36,7 +36,7 @@ module "secrets_manager" {
   sm_service_plan               = var.sm_service_plan
   allowed_network               = "private-only"
   endpoint_type                 = "private"
-  sm_tags                       = var.resource_tags
+  resource_tags                 = var.resource_tags
   skip_iam_authorization_policy = var.skip_iam_authorization_policy
 }
 
