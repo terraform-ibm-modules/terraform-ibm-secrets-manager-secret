@@ -37,7 +37,7 @@ module "secrets_manager" {
   secrets_manager_name = "${var.prefix}-secrets-manager"
   sm_service_plan      = var.sm_service_plan
   allowed_network      = "public-and-private"
-  sm_tags              = var.resource_tags
+  resource_tags        = var.resource_tags
 }
 
 ##############################################################################
