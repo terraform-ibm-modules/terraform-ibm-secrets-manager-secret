@@ -46,7 +46,7 @@ module "secrets_manager" {
 
 module "secrets_manager_group" {
   source                   = "terraform-ibm-modules/secrets-manager-secret-group/ibm"
-  version                  = "1.5.2"
+  version                  = "1.5.3"
   region                   = local.sm_region
   secrets_manager_guid     = module.secrets_manager.secrets_manager_guid
   secret_group_name        = "${var.prefix}-group"
