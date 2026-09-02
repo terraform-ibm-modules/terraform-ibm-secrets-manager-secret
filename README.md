@@ -191,9 +191,9 @@ You need the following permissions to run this module.
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.70.0, < 3.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.84.3, < 3.0.0 |
 
 ### Modules
 
@@ -202,7 +202,7 @@ No modules.
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
 | [ibm_sm_custom_credentials_secret.custom_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_custom_credentials_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
@@ -213,14 +213,16 @@ No modules.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_custom_credentials_configurations"></a> [custom\_credentials\_configurations](#input\_custom\_credentials\_configurations) | The name of the custom credentials secret configuration. | `string` | `null` | no |
 | <a name="input_custom_credentials_parameters"></a> [custom\_credentials\_parameters](#input\_custom\_credentials\_parameters) | Whether to create parameters for custom credentials secret or not | `bool` | `false` | no |
 | <a name="input_custom_metadata"></a> [custom\_metadata](#input\_custom\_metadata) | Optional metadata to be added to the secret. | `map(string)` | `null` | no |
 | <a name="input_endpoint_type"></a> [endpoint\_type](#input\_endpoint\_type) | The endpoint type to communicate with the provided secrets manager instance. Possible values are `public` or `private` | `string` | `"public"` | no |
 | <a name="input_imported_cert_certificate"></a> [imported\_cert\_certificate](#input\_imported\_cert\_certificate) | The TLS certificate to import. | `string` | `null` | no |
 | <a name="input_imported_cert_intermediate"></a> [imported\_cert\_intermediate](#input\_imported\_cert\_intermediate) | (optional) The intermediate certificate for the TLS certificate to import. | `string` | `null` | no |
+| <a name="input_imported_cert_managed_csr"></a> [imported\_cert\_managed\_csr](#input\_imported\_cert\_managed\_csr) | (optional) When set, IBM Secrets Manager generates the private key and CSR internally. Use this instead of `imported_cert_certificate` when you want IBM to manage key generation. Cannot be combined with `imported_cert_certificate`. Requires IBM provider >= 1.84.3. | <pre>object({<br/>    # Key generation<br/>    key_type = optional(string) # Type of private key to generate. e.g. "rsa". Default: "rsa"<br/>    key_bits = optional(number) # Number of bits for the private key. e.g. 2048, 4096<br/>    # Subject fields<br/>    common_name    = optional(string)<br/>    country        = optional(list(string))<br/>    locality       = optional(list(string))<br/>    organization   = optional(list(string))<br/>    ou             = optional(list(string))<br/>    postal_code    = optional(list(string))<br/>    province       = optional(list(string))<br/>    street_address = optional(list(string))<br/>    # Subject Alternative Names — comma-delimited strings<br/>    alt_names  = optional(string)<br/>    ip_sans    = optional(string)<br/>    uri_sans   = optional(string)<br/>    other_sans = optional(string)<br/>    user_ids   = optional(string)<br/>    # Key usage constraints — comma-delimited strings<br/>    key_usage          = optional(string)<br/>    ext_key_usage      = optional(string)<br/>    ext_key_usage_oids = optional(string)<br/>    policy_identifiers = optional(string)<br/>    # Flags<br/>    client_flag           = optional(bool)<br/>    code_signing_flag     = optional(bool)<br/>    email_protection_flag = optional(bool)<br/>    server_flag           = optional(bool)<br/>    exclude_cn_from_sans  = optional(bool)<br/>    require_cn            = optional(bool)<br/>    rotate_keys           = optional(bool)<br/>  })</pre> | `null` | no |
 | <a name="input_imported_cert_private_key"></a> [imported\_cert\_private\_key](#input\_imported\_cert\_private\_key) | (optional) The private key for the TLS certificate to import. | `string` | `null` | no |
+| <a name="input_imported_cert_version_custom_metadata"></a> [imported\_cert\_version\_custom\_metadata](#input\_imported\_cert\_version\_custom\_metadata) | (optional) Custom metadata to associate with a specific version of the imported certificate secret. Requires IBM provider >= 1.84.3. | `map(string)` | `null` | no |
 | <a name="input_job_parameters"></a> [job\_parameters](#input\_job\_parameters) | The parameters that are passed to the Code Engine job. | <pre>object({<br/>    integer_values = optional(map(number))<br/>    string_values  = optional(map(string))<br/>    boolean_values = optional(map(bool))<br/>  })</pre> | `{}` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where the Secrets Manager instance is deployed. | `string` | n/a | yes |
 | <a name="input_secret_auto_rotation"></a> [secret\_auto\_rotation](#input\_secret\_auto\_rotation) | Whether to configure automatic rotation. Applies only to the `username_password` and `service_credentials` secret types. | `bool` | `true` | no |
@@ -245,7 +247,7 @@ No modules.
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_secret_crn"></a> [secret\_crn](#output\_secret\_crn) | CRN of the created Secret |
 | <a name="output_secret_group_id"></a> [secret\_group\_id](#output\_secret\_group\_id) | Secret group ID of the created secret |
 | <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
