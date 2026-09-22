@@ -191,7 +191,7 @@ You need the following permissions to run this module.
 ### Requirements
 
 | Name | Version |
-| ---- | ------- |
+|------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.84.3, < 3.0.0 |
 
@@ -202,7 +202,7 @@ No modules.
 ### Resources
 
 | Name | Type |
-| ---- | ---- |
+|------|------|
 | [ibm_sm_arbitrary_secret.arbitrary_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_arbitrary_secret) | resource |
 | [ibm_sm_custom_credentials_secret.custom_credentials_secret](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_custom_credentials_secret) | resource |
 | [ibm_sm_imported_certificate.imported_cert](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/sm_imported_certificate) | resource |
@@ -213,7 +213,7 @@ No modules.
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-| ---- | ----------- | ---- | ------- | :------: |
+|------|-------------|------|---------|:--------:|
 | <a name="input_custom_credentials_configurations"></a> [custom\_credentials\_configurations](#input\_custom\_credentials\_configurations) | The name of the custom credentials secret configuration. | `string` | `null` | no |
 | <a name="input_custom_credentials_parameters"></a> [custom\_credentials\_parameters](#input\_custom\_credentials\_parameters) | Whether to create parameters for custom credentials secret or not | `bool` | `false` | no |
 | <a name="input_custom_metadata"></a> [custom\_metadata](#input\_custom\_metadata) | Optional metadata to be added to the secret. | `map(string)` | `null` | no |
@@ -247,7 +247,7 @@ No modules.
 ### Outputs
 
 | Name | Description |
-| ---- | ----------- |
+|------|-------------|
 | <a name="output_secret_crn"></a> [secret\_crn](#output\_secret\_crn) | CRN of the created Secret |
 | <a name="output_secret_group_id"></a> [secret\_group\_id](#output\_secret\_group\_id) | Secret group ID of the created secret |
 | <a name="output_secret_id"></a> [secret\_id](#output\_secret\_id) | ID of the created Secret |
