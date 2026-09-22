@@ -174,7 +174,7 @@ resource "tls_locally_signed_cert" "cert" {
   allowed_uses          = ["key_encipherment", "digital_signature", "server_auth"]
 }
 
-# create imported cert secret
+# create imported cert secret (traditional: bring your own certificate)
 module "secret_manager_imported_cert" {
   source                     = "../.."
   region                     = local.sm_region
@@ -187,6 +187,25 @@ module "secret_manager_imported_cert" {
   imported_cert_private_key  = resource.tls_private_key.key.private_key_pem
   imported_cert_intermediate = resource.tls_self_signed_cert.ca_cert.cert_pem
   custom_metadata            = { "metadata_custom_key" : "metadata_custom_value" } # can add any custom metadata here
+}
+
+# create imported cert secret (managed CSR: IBM generates the private key and CSR internally)
+module "secret_manager_imported_cert_managed_csr" {
+  source               = "../.."
+  region               = local.sm_region
+  secrets_manager_guid = local.sm_guid
+  secret_name          = "${var.prefix}-imported-cert-managed-csr"
+  secret_group_id      = module.secrets_manager_group.secret_group_id
+  secret_description   = "Imported cert where IBM Secrets Manager generates the private key and CSR"
+  secret_type          = "imported_cert" #checkov:skip=CKV_SECRET_6
+  imported_cert_managed_csr = {
+    key_type     = "rsa"
+    key_bits     = 2048
+    common_name  = "goldeneye.com"
+    organization = ["GoldenEye"]
+    country      = ["US"]
+  }
+  custom_metadata = { "metadata_custom_key" : "metadata_custom_value" }
 }
 
 ##############################################################################

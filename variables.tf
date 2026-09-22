@@ -38,8 +38,8 @@ variable "secret_type" {
   }
 
   validation {
-    condition     = var.secret_type == "imported_cert" ? var.imported_cert_certificate != null : true
-    error_message = "When creating an imported_cert secret, value for `imported_cert_certificate` cannot be null."
+    condition     = var.secret_type == "imported_cert" ? (var.imported_cert_certificate != null || var.imported_cert_managed_csr != null) : true
+    error_message = "When creating an imported_cert secret, either `imported_cert_certificate` or `imported_cert_managed_csr` must be provided."
   }
 
   validation {
@@ -69,6 +69,55 @@ variable "imported_cert_private_key" {
 variable "imported_cert_intermediate" {
   type        = string
   description = "(optional) The intermediate certificate for the TLS certificate to import."
+  default     = null
+}
+
+variable "imported_cert_managed_csr" {
+  description = "(optional) When set, IBM Secrets Manager generates the private key and CSR internally. Use this instead of `imported_cert_certificate` when you want IBM to manage key generation. Cannot be combined with `imported_cert_certificate`. Requires IBM provider >= 1.84.3."
+  type = object({
+    # Key generation
+    key_type = optional(string) # Type of private key to generate. e.g. "rsa". Default: "rsa"
+    key_bits = optional(number) # Number of bits for the private key. e.g. 2048, 4096
+    # Subject fields
+    common_name    = optional(string)
+    country        = optional(list(string))
+    locality       = optional(list(string))
+    organization   = optional(list(string))
+    ou             = optional(list(string))
+    postal_code    = optional(list(string))
+    province       = optional(list(string))
+    street_address = optional(list(string))
+    # Subject Alternative Names — comma-delimited strings
+    alt_names  = optional(string)
+    ip_sans    = optional(string)
+    uri_sans   = optional(string)
+    other_sans = optional(string)
+    user_ids   = optional(string)
+    # Key usage constraints — comma-delimited strings
+    key_usage          = optional(string)
+    ext_key_usage      = optional(string)
+    ext_key_usage_oids = optional(string)
+    policy_identifiers = optional(string)
+    # Flags
+    client_flag           = optional(bool)
+    code_signing_flag     = optional(bool)
+    email_protection_flag = optional(bool)
+    server_flag           = optional(bool)
+    exclude_cn_from_sans  = optional(bool)
+    require_cn            = optional(bool)
+    rotate_keys           = optional(bool)
+  })
+  default = null
+
+  validation {
+    condition     = !(var.imported_cert_managed_csr != null && var.imported_cert_certificate != null)
+    error_message = "Cannot set both `imported_cert_managed_csr` and `imported_cert_certificate`. Use one or the other."
+  }
+}
+
+variable "imported_cert_version_custom_metadata" {
+  type        = map(string)
+  description = "(optional) Custom metadata to associate with a specific version of the imported certificate secret. Requires IBM provider >= 1.84.3."
   default     = null
 }
 
