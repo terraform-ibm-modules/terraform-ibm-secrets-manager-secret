@@ -201,8 +201,8 @@ module "secret_manager_imported_cert_managed_csr" {
   imported_cert_managed_csr = {
     key_type     = "rsa"
     key_bits     = 2048
-    common_name  = "goldeneye.com"
-    organization = ["GoldenEye"]
+    common_name  = "example.com"
+    organization = ["Example Org"]
     country      = ["US"]
   }
   custom_metadata = { "metadata_custom_key" : "metadata_custom_value" }
