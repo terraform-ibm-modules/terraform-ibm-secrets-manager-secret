@@ -106,7 +106,7 @@ variable "imported_cert_managed_csr" {
     require_cn            = optional(bool)
     rotate_keys           = optional(bool)
   })
-  description = "(optional) The data used to create a certificate signing request (CSR) and private key for the imported certificate secret. Cannot be set together with `imported_cert_certificate`."
+  description = "The data used to create a certificate signing request (CSR) and private key for the imported certificate secret. Cannot be set together with `imported_cert_certificate`."
   default     = null
 
   validation {
@@ -127,7 +127,7 @@ variable "imported_cert_managed_csr" {
 
 variable "imported_cert_version_custom_metadata" {
   type        = map(string)
-  description = "(optional) Custom metadata to associate with a specific version of the imported certificate secret."
+  description = "Custom metadata to associate with a specific version of the imported certificate secret."
   default     = null
 }
 
