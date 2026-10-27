@@ -38,8 +38,8 @@ variable "secret_type" {
   }
 
   validation {
-    condition     = var.secret_type == "imported_cert" ? var.imported_cert_certificate != null : true
-    error_message = "When creating an imported_cert secret, value for `imported_cert_certificate` cannot be null."
+    condition     = var.secret_type == "imported_cert" ? (var.imported_cert_certificate != null || var.imported_cert_managed_csr != null) : true
+    error_message = "When creating an imported_cert secret, either `imported_cert_certificate` or `imported_cert_managed_csr` must be provided."
   }
 
   validation {
@@ -69,6 +69,65 @@ variable "imported_cert_private_key" {
 variable "imported_cert_intermediate" {
   type        = string
   description = "(optional) The intermediate certificate for the TLS certificate to import."
+  default     = null
+}
+
+variable "imported_cert_managed_csr" {
+  type = object({
+    # Key generation
+    key_type = optional(string) # Type of private key to generate. Allowed values: "rsa", "ec". Default: "rsa"
+    key_bits = optional(number) # Number of bits for the private key. RSA: 2048, 4096. EC: 224, 256, 384, 521
+    # Subject fields
+    common_name    = optional(string)
+    country        = optional(list(string))
+    locality       = optional(list(string))
+    organization   = optional(list(string))
+    ou             = optional(list(string))
+    postal_code    = optional(list(string))
+    province       = optional(list(string))
+    street_address = optional(list(string))
+    # Subject Alternative Names — comma-delimited strings
+    alt_names  = optional(string)
+    ip_sans    = optional(string)
+    uri_sans   = optional(string)
+    other_sans = optional(string)
+    user_ids   = optional(string)
+    # Key usage constraints — comma-delimited strings
+    key_usage          = optional(string)
+    ext_key_usage      = optional(string)
+    ext_key_usage_oids = optional(string)
+    policy_identifiers = optional(string)
+    # Flags
+    client_flag           = optional(bool)
+    code_signing_flag     = optional(bool)
+    email_protection_flag = optional(bool)
+    server_flag           = optional(bool)
+    exclude_cn_from_sans  = optional(bool)
+    require_cn            = optional(bool)
+    rotate_keys           = optional(bool)
+  })
+  description = "The data used to create a certificate signing request (CSR) and private key for the imported certificate secret. Cannot be set together with `imported_cert_certificate`."
+  default     = null
+
+  validation {
+    condition     = !(var.imported_cert_managed_csr != null && var.imported_cert_certificate != null)
+    error_message = "Cannot set both `imported_cert_managed_csr` and `imported_cert_certificate`. Use one or the other."
+  }
+
+  validation {
+    condition     = var.imported_cert_managed_csr == null ? true : (var.imported_cert_managed_csr.key_type == null || contains(["rsa", "ec"], var.imported_cert_managed_csr.key_type))
+    error_message = "The `key_type` in `imported_cert_managed_csr` must be either `rsa` or `ec`."
+  }
+
+  validation {
+    condition     = var.imported_cert_managed_csr == null ? true : (var.imported_cert_managed_csr.key_bits == null || contains(lookup({ rsa = [2048, 4096], ec = [224, 256, 384, 521] }, coalesce(var.imported_cert_managed_csr.key_type, "rsa"), []), var.imported_cert_managed_csr.key_bits))
+    error_message = "The `key_bits` in `imported_cert_managed_csr` must be 2048 or 4096 when `key_type` is `rsa` (the default), or 224, 256, 384 or 521 when `key_type` is `ec`."
+  }
+}
+
+variable "imported_cert_version_custom_metadata" {
+  type        = map(string)
+  description = "Custom metadata to associate with a specific version of the imported certificate secret."
   default     = null
 }
 
