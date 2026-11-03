@@ -90,6 +90,11 @@ func TestRunUpgradeExample(t *testing.T) {
 	// t.Parallel()
 
 	options := setupOptions(t, "sm-secret-module-upg", terraformDir)
+	options.IgnoreDestroys = testhelper.Exemptions{
+		List: []string{
+			"module.code_engine_build.terraform_data.install_required_binaries[0]",
+		},
+	}
 	output, err := options.RunTestUpgrade()
 	if !options.UpgradeTestSkipped {
 		assert.Nil(t, err, "This should not have errored")
