@@ -28,7 +28,7 @@ module "resource_group" {
 
 module "secrets_manager" {
   source                        = "terraform-ibm-modules/secrets-manager/ibm"
-  version                       = "3.1.3"
+  version                       = "3.2.0"
   existing_sm_instance_crn      = var.existing_sm_instance_crn
   resource_group_id             = module.resource_group.resource_group_id
   region                        = local.sm_region
@@ -360,7 +360,7 @@ module "code_engine_job" {
 
 module "custom_credential_engine" {
   source                        = "terraform-ibm-modules/secrets-manager-custom-credentials-engine/ibm"
-  version                       = "1.2.14"
+  version                       = "1.2.15"
   secrets_manager_guid          = module.secrets_manager.secrets_manager_guid
   secrets_manager_region        = local.sm_region
   custom_credential_engine_name = "${var.prefix}-test-custom-engine"
