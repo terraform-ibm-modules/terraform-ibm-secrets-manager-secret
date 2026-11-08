@@ -215,7 +215,7 @@ module "secret_manager_imported_cert_managed_csr" {
 # create a COS instance to create the service credential for
 module "cloud_object_storage" {
   source                             = "terraform-ibm-modules/cos/ibm"
-  version                            = "11.2.7"
+  version                            = "11.2.8"
   resource_group_id                  = module.resource_group.resource_group_id
   region                             = var.region
   cos_instance_name                  = "${var.prefix}-cos"
